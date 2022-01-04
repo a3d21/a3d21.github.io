@@ -16,13 +16,15 @@
   <meta name="description" content="">
   <meta name="author" content="a3d21">
   <meta name="keywords" content="">
-  <meta property="og:type" content="article">
+  <meta name="description" content="编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。  常见误解 测试是QA团队的事最常见的误解是，测试是QA团队的事。RD只负责编写代码，测试完全由QA负责，无需（或没必要）花太多精力在测试上。事实上，可测试性是架构的一部分，编写可测试的代码对架构提出更严格的要求，需要付出努力才能达到。能否编写可测试代码的衡量一个人软件工程能力的重要标准。 编写测试影响开">
+<meta property="og:type" content="article">
 <meta property="og:title" content="如何测试服务？——Go DDD实践">
 <meta property="og:url" content="https://a3d21.github.io/2022/01/04/2022-01-04-how-to-test-your-service/index.html">
 <meta property="og:site_name" content="a3d21&#39;s blog">
+<meta property="og:description" content="编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。  常见误解 测试是QA团队的事最常见的误解是，测试是QA团队的事。RD只负责编写代码，测试完全由QA负责，无需（或没必要）花太多精力在测试上。事实上，可测试性是架构的一部分，编写可测试的代码对架构提出更严格的要求，需要付出努力才能达到。能否编写可测试代码的衡量一个人软件工程能力的重要标准。 编写测试影响开">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-01-04T03:28:08.000Z">
-<meta property="article:modified_time" content="2022-01-04T08:11:32.113Z">
+<meta property="article:published_time" content="2022-01-04T10:03:11.000Z">
+<meta property="article:modified_time" content="2022-01-04T10:03:21.986Z">
 <meta property="article:author" content="a3d21">
 <meta property="article:tag" content="编程">
 <meta name="twitter:card" content="summary_large_image">
@@ -183,8 +185,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-01-04 11:28" pubdate>
-        2022年1月4日 上午
+      <time datetime="2022-01-04 18:03" pubdate>
+        2022年1月4日 晚上
       </time>
     </span>
   
@@ -194,7 +196,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      0 字
+      1k 字
     </span>
   
 
@@ -203,7 +205,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1 分钟
+      3 分钟
     </span>
   
 
@@ -235,7 +237,83 @@
             <h1 style="display: none">如何测试服务？——Go DDD实践</h1>
             
             <div class="markdown-body">
-              
+              <p>编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。</p>
+<blockquote>
+<p>常见误解</p>
+<p><strong>测试是QA团队的事</strong><br>最常见的误解是，测试是QA团队的事。RD只负责编写代码，测试完全由QA负责，无需（或没必要）花太多精力在测试上。事实上，可测试性是架构的一部分，编写可测试的代码对架构提出更严格的要求，需要付出努力才能达到。能否编写可测试代码的衡量一个人软件工程能力的重要标准。</p>
+<p><strong>编写测试影响开发效率</strong><br>项目赶进度，编写测试影响开发效率？大量统计表明，编写测试可以提升开发效率。其中主要原因有两方面：自动化测试可以帮助迭代开发中快速定位异常，缩短定位时间；测试对系统架构提出更严格要求，好的架构更容易迭代。</p>
+<p><strong>单测覆盖面越广越好</strong><br>测试的目的是帮忙我们快速定位异常位置，理想的测试应该是足够精细，以至于当用例报错时，可以直接定位到异常原因。覆盖面太广会使问题难以定位，</p>
+</blockquote>
+<h2 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h2><p>在DDD实践中，我们将系统分层：应用层、领域层、设施层。</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>简写</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>应用层</td>
+<td>Application</td>
+<td>聚合领域服务，并对外提供接口</td>
+</tr>
+<tr>
+<td>领域层</td>
+<td>Domain</td>
+<td>通过领域服务对业务逻辑建模</td>
+</tr>
+<tr>
+<td>设施层</td>
+<td>Infra</td>
+<td>领域服务的设施实现</td>
+</tr>
+</tbody></table>
+<p>在一个DDD系统中，领域层只负责业务逻辑，与具体设施实现无关。事实上，一个领域服务可以有多个不同的设施实现（比如：Infra1使用mysql作为repo实现、Infra2使用mongo）。</p>
+<p>为方便理解，引入记号。 </p>
+<table>
+<thead>
+<tr>
+<th>记号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$D$</td>
+<td>领域服务</td>
+</tr>
+<tr>
+<td>$I$、$I_n$</td>
+<td>设施实现，eg: $I_1$、$I_2$</td>
+</tr>
+</tbody></table>
+<p>$D$和$I$组合成一个具体的领域服务实现——$D\ I_1$、$D\ I_2$。</p>
+<p>对于测试，我们进行分层。</p>
+<table>
+<thead>
+<tr>
+<th>记号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$TD$</td>
+<td>领域层测试。用于验证业务逻辑</td>
+</tr>
+<tr>
+<td>$TI$</td>
+<td>设施层测试。用于保证Infra实现正确</td>
+</tr>
+</tbody></table>
+<p>$TI$类型签名为 $TI :: I \rightarrow ()$，表示接收一个设施实现作为参数，返回测试结果。<br>$TD$类型签名为 $TD :: D \rightarrow I \rightarrow ()$，表示依次接收一个领域服务和设施实现作为参数，返回测试结果。</p>
+<p>这么设计的一个好处是，测试与设施解耦，可自由组合。<br>比如，$TI\ I_1$ 表示对Infra1进行测试、 $TD\ D\ I_2$ 表示对由Infra2实现的领域服务进行测试。</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><blockquote>
+<p>Talk is cheap. Show me the code.</p>
+</blockquote>
+<p>Okay，上面的“理论”可能有点抽象，不是很容易理解。来点实践吧。</p>
+<p>假设场景：一个账户服务，可以开/关户、存/取钱。</p>
+<p>REPO: <a target="_blank" rel="noopener" href="https://github.com/a3d21/goddd">https://github.com/a3d21/goddd</a></p>
+
             </div>
             <hr>
             <div>
@@ -412,6 +490,48 @@
 
 
 
+
+  
+
+  
+    <!-- MathJax -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        loader: {
+          load: ['ui/lazy']
+        },
+        options: {
+          renderActions: {
+            findScript: [10, doc => {
+              document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+                const display = !!node.type.match(/; *mode=display/);
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+                const text = document.createTextNode('');
+                node.parentNode.replaceChild(text, node);
+                math.start = { node: text, delim: '', n: 0 };
+                math.end = { node: text, delim: '', n: 0 };
+                doc.math.push(math);
+              });
+            }, '', false],
+            insertedScript: [200, () => {
+              document.querySelectorAll('mjx-container').forEach(node => {
+                let target = node.parentNode;
+                if (target.nodeName.toLowerCase() === 'li') {
+                  target.parentNode.classList.add('has-jax');
+                }
+              });
+            }, '', false]
+          }
+        }
+      };
+    </script>
+
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" ></script>
+
+  
 
 
 
