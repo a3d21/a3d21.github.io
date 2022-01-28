@@ -13,23 +13,24 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。">
+  <meta name="description" content="在上一篇文章中，我实现了Go BufferChan。但BufferChan作为一个独立库，实际使用上并不方便，所以想着把BufferChan整合进GoStream中。
+原理是，将上一篇文章的实现原理封闭在在GoStream的BufferChan()中。">
   <meta name="author" content="a3d21">
   <meta name="keywords" content="">
-  <meta name="description" content="编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。">
+  <meta name="description" content="在上一篇文章中，我实现了Go BufferChan。但BufferChan作为一个独立库，实际使用上并不方便，所以想着把BufferChan整合进GoStream中。 原理是，将上一篇文章的实现原理封闭在在GoStream的BufferChan()中。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何测试服务？——Go DDD实践">
-<meta property="og:url" content="https://a3d21.github.io/2022/01/04/2022-01-04-how-to-test-your-service/index.html">
+<meta property="og:title" content="GoStream实现BufferChan">
+<meta property="og:url" content="https://a3d21.github.io/2022/01/28/2022-01-28-gostream-buffer-channel/index.html">
 <meta property="og:site_name" content="a3d21&#39;s blog">
-<meta property="og:description" content="编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。">
+<meta property="og:description" content="在上一篇文章中，我实现了Go BufferChan。但BufferChan作为一个独立库，实际使用上并不方便，所以想着把BufferChan整合进GoStream中。 原理是，将上一篇文章的实现原理封闭在在GoStream的BufferChan()中。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-01-04T10:03:11.000Z">
-<meta property="article:modified_time" content="2022-01-28T09:55:40.197Z">
+<meta property="article:published_time" content="2022-01-28T09:35:25.000Z">
+<meta property="article:modified_time" content="2022-01-28T09:55:08.131Z">
 <meta property="article:author" content="a3d21">
 <meta property="article:tag" content="编程">
 <meta name="twitter:card" content="summary_large_image">
   
-  <title>如何测试服务？——Go DDD实践 - a3d21&#39;s blog</title>
+  <title>GoStream实现BufferChan - a3d21&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -175,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="如何测试服务？——Go DDD实践">
+            <span class="h2" id="subtitle" title="GoStream实现BufferChan">
               
             </span>
 
@@ -185,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-01-04 18:03" pubdate>
-        2022年1月4日 晚上
+      <time datetime="2022-01-28 17:35" pubdate>
+        2022年1月28日 下午
       </time>
     </span>
   
@@ -196,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1k 字
+      2k 字
     </span>
   
 
@@ -205,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      3 分钟
+      6 分钟
     </span>
   
 
@@ -234,87 +235,18 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">如何测试服务？——Go DDD实践</h1>
+            <h1 style="display: none">GoStream实现BufferChan</h1>
             
             <div class="markdown-body">
-              <p>编写能跑的程序，是编程的最低要求，软件工程的真正难点在于架构和测试。大多数人对测试存在误解。</p>
+              <p>在<a href="/2022/01/27/2022-01-27-go-buffer-channel/">上一篇文章</a>中，我实现了Go BufferChan。但BufferChan作为一个独立库，实际使用上并不方便，所以想着把BufferChan整合进<a target="_blank" rel="noopener" href="https://github.com/a3d21/gostream">GoStream</a>中。</p>
+<p>原理是，将<a href="/2022/01/27/2022-01-27-go-buffer-channel/">上一篇文章</a>的实现原理封闭在在GoStream的<code>BufferChan()</code>中。</p>
 <span id="more"></span>
 
-<blockquote>
-<p>常见误解</p>
-<p><strong>测试是QA团队的事</strong><br>最常见的误解是，测试是QA团队的事。RD只负责编写代码，测试完全由QA负责，无需（或没必要）花太多精力在测试上。事实上，可测试性是架构的一部分，编写可测试的代码对架构提出更严格的要求，需要付出努力才能达到。能否编写可测试代码的衡量一个人软件工程能力的重要标准。</p>
-<p><strong>编写测试影响开发效率</strong><br>项目赶进度，编写测试影响开发效率？大量统计表明，编写测试可以提升开发效率。其中主要原因有两方面：自动化测试可以帮助迭代开发中快速定位异常，缩短定位时间；测试对系统架构提出更严格要求，好的架构更容易迭代。</p>
-<p><strong>单测覆盖面越广越好</strong><br>测试的目的是帮忙我们快速定位异常位置，理想的测试应该是足够精细，以至于当用例报错时，可以直接定位到异常原因。覆盖面太广会使问题难以定位，</p>
-</blockquote>
-<h2 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h2><p>在DDD实践中，我们将系统分层：应用层、领域层、设施层。</p>
-<table>
-<thead>
-<tr>
-<th>层级</th>
-<th>简写</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>应用层</td>
-<td>Application</td>
-<td>聚合领域服务，并对外提供接口</td>
-</tr>
-<tr>
-<td>领域层</td>
-<td>Domain</td>
-<td>通过领域服务对业务逻辑建模</td>
-</tr>
-<tr>
-<td>设施层</td>
-<td>Infra</td>
-<td>领域服务的设施实现</td>
-</tr>
-</tbody></table>
-<p>在一个DDD系统中，领域层只负责业务逻辑，与具体设施实现无关。事实上，一个领域服务可以有多个不同的设施实现（比如：Infra1使用mysql作为repo实现、Infra2使用mongo）。</p>
-<p>为方便理解，引入记号。 </p>
-<table>
-<thead>
-<tr>
-<th>记号</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>$D$</td>
-<td>领域服务</td>
-</tr>
-<tr>
-<td>$I$、$I_n$</td>
-<td>设施实现，eg: $I_1$、$I_2$</td>
-</tr>
-</tbody></table>
-<p>$D$和$I$组合成一个具体的领域服务实现——$D\ I_1$、$D\ I_2$。</p>
-<p>对于测试，我们进行分层。</p>
-<table>
-<thead>
-<tr>
-<th>记号</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>$TD$</td>
-<td>领域层测试。用于验证业务逻辑</td>
-</tr>
-<tr>
-<td>$TI$</td>
-<td>设施层测试。用于保证Infra实现正确</td>
-</tr>
-</tbody></table>
-<p>$TI$类型签名为 $TI :: I \rightarrow ()$，表示接收一个设施实现作为参数，返回测试结果。<br>$TD$类型签名为 $TD :: D \rightarrow I \rightarrow ()$，表示依次接收一个领域服务和设施实现作为参数，返回测试结果。</p>
-<p>这么设计的一个好处是，测试与设施解耦，可自由组合。<br>比如，$TI\ I_1$ 表示对Infra1进行测试、 $TD\ D\ I_2$ 表示对由Infra2实现的领域服务进行测试。</p>
-<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><blockquote>
-<p>Talk is cheap. Show me the code.</p>
-</blockquote>
-<p>Okay，上面的“理论”可能有点抽象，不是很容易理解。来点实践吧。</p>
-<p>假设场景：一个账户服务，可以开/关户、存/取钱。</p>
-<p>REPO: <a target="_blank" rel="noopener" href="https://github.com/a3d21/goddd">https://github.com/a3d21/goddd</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">/// chan.go</span><br><br><span class="hljs-comment">// BufferChan 对channel运行缓存</span><br><span class="hljs-comment">// 当接收消息达到`size`或超过`timeout`未收到新消息时，发送消息</span><br><span class="hljs-comment">// 参数说明</span><br><span class="hljs-comment">//   typ  slice类型参数</span><br><span class="hljs-comment">//   size  缓存数量</span><br><span class="hljs-comment">//   timeout  超时时间</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s Stream)</span> <span class="hljs-title">BufferChan</span><span class="hljs-params">(typ <span class="hljs-keyword">interface</span>&#123;&#125;, size <span class="hljs-keyword">int</span>, timeout time.Duration)</span> <span class="hljs-title">Stream</span></span> &#123;<br>	t := reflect.TypeOf(typ)<br>	<span class="hljs-keyword">if</span> t.Kind() != reflect.Slice &#123;<br>		<span class="hljs-built_in">panic</span>(<span class="hljs-string">&quot;typ should be slice&quot;</span>)<br>	&#125;<br>	<span class="hljs-keyword">if</span> size &lt;= <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-built_in">panic</span>(<span class="hljs-string">&quot;size should gt 0&quot;</span>)<br>	&#125;<br>	<span class="hljs-keyword">if</span> timeout &lt;= <span class="hljs-number">0</span> &#123;<br>		<span class="hljs-built_in">panic</span>(<span class="hljs-string">&quot;timeout should gt 0&quot;</span>)<br>	&#125;<br><br>	in := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">interface</span>&#123;&#125;)<br>	out := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">interface</span>&#123;&#125;)<br>	<span class="hljs-keyword">go</span> s.OutChan(in)<br><br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		sv := reflect.MakeSlice(t, size, size)<br>		idx := <span class="hljs-number">0</span><br><br>		<span class="hljs-keyword">var</span> brush = <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>			out &lt;- sv.Slice(<span class="hljs-number">0</span>, idx).Interface()<br>			sv = reflect.MakeSlice(t, size, size)<br>			idx = <span class="hljs-number">0</span><br>		&#125;<br><br>		<span class="hljs-keyword">for</span> &#123;<br>			<span class="hljs-keyword">select</span> &#123;<br>			<span class="hljs-keyword">case</span> v, ok := &lt;-in:<br>				<span class="hljs-keyword">if</span> ok &#123;<br>					sv.Index(idx).Set(reflect.ValueOf(v))<br>					idx++<br>					<span class="hljs-keyword">if</span> idx == size &#123;<br>						brush()<br>					&#125;<br>				&#125; <span class="hljs-keyword">else</span> &#123;<br>					<span class="hljs-keyword">if</span> idx &gt; <span class="hljs-number">0</span> &#123;<br>						brush()<br>					&#125;<br>					<span class="hljs-built_in">close</span>(out)<br>					<span class="hljs-keyword">return</span><br>				&#125;<br>			<span class="hljs-keyword">case</span> &lt;-time.After(timeout):<br>				<span class="hljs-keyword">if</span> idx &gt; <span class="hljs-number">0</span> &#123;<br>					brush()<br>				&#125;<br>			&#125;<br>		&#125;<br>	&#125;()<br><br>	<span class="hljs-keyword">return</span> From(out)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>加点测试验证下。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">/// chan_test.go</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestBufferChanBySize</span><span class="hljs-params">(t *testing.T)</span></span> &#123;<br>	in := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">int</span>)<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++ &#123;<br>			in &lt;- i<br>		&#125;<br>		<span class="hljs-built_in">close</span>(in)<br>	&#125;()<br><br>	want := [][]<span class="hljs-keyword">int</span>&#123;&#123;<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>&#125;, &#123;<span class="hljs-number">3</span>, <span class="hljs-number">4</span>&#125;&#125;<br>	got := From(in).BufferChan([]<span class="hljs-keyword">int</span>&#123;&#125;, <span class="hljs-number">3</span>, time.Second).Collect(ToSlice([][]<span class="hljs-keyword">int</span>&#123;&#125;))<br>	assert.Equal(t, want, got)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestBufferChanByTimeout</span><span class="hljs-params">(t *testing.T)</span></span> &#123;<br>	in := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-keyword">int</span>)<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>		in &lt;- <span class="hljs-number">0</span><br>		time.Sleep(time.Millisecond * <span class="hljs-number">500</span>)<br>		in &lt;- <span class="hljs-number">1</span><br>		in &lt;- <span class="hljs-number">2</span><br>		time.Sleep(time.Millisecond * <span class="hljs-number">500</span>)<br>		in &lt;- <span class="hljs-number">3</span><br>		in &lt;- <span class="hljs-number">4</span><br>		<span class="hljs-built_in">close</span>(in)<br>	&#125;()<br>	want := [][]<span class="hljs-keyword">int</span>&#123;&#123;<span class="hljs-number">0</span>&#125;, &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>&#125;, &#123;<span class="hljs-number">3</span>, <span class="hljs-number">4</span>&#125;&#125;<br>	got := From(in).BufferChan([]<span class="hljs-keyword">int</span>&#123;&#125;, <span class="hljs-number">100</span>, time.Millisecond*<span class="hljs-number">300</span>).Collect(ToSlice([][]<span class="hljs-keyword">int</span>&#123;&#125;))<br>	assert.Equal(t, want, got)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
 
             </div>
             <hr>
@@ -342,18 +274,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/01/25/2022-01-25-concurrency-model/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">并发模型</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/11/16/2021-11-16-gostream/">
-                        <span class="hidden-mobile">Go集合流式API - GoStream</span>
+                      <a href="/2022/01/27/2022-01-27-go-buffer-channel/">
+                        <span class="hidden-mobile">实现GoChannel缓存——BufferChan</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
