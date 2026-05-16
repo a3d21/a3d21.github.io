@@ -1,0 +1,1010 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="a3d21">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. AI 编程范式演进AI 编程在过去几年的演进大体经历了三个阶段：提示词工程 → AI-assisted Coding → AI Coding Workflow。每个阶段对应人与 AI 的协作方式不同，能力边界也不同。 1234┌────────────────────┐   ┌────────────────────┐   ┌────────────────────┐│  Prompt En">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI编程实用分享">
+<meta property="og:url" content="https://a3d21.github.io/2026/05/03/2026-05-03-AI-Coding-Practices/index.html">
+<meta property="og:site_name" content="a3d21&#39;s blog">
+<meta property="og:description" content="1. AI 编程范式演进AI 编程在过去几年的演进大体经历了三个阶段：提示词工程 → AI-assisted Coding → AI Coding Workflow。每个阶段对应人与 AI 的协作方式不同，能力边界也不同。 1234┌────────────────────┐   ┌────────────────────┐   ┌────────────────────┐│  Prompt En">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-03T15:38:19.000Z">
+<meta property="article:modified_time" content="2026-05-16T07:55:02.990Z">
+<meta property="article:author" content="a3d21">
+<meta property="article:tag" content="编程">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AI编程实用分享 - a3d21&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"a3d21.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>a3d21&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AI编程实用分享"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-05-03 15:38" pubdate>
+          2026年5月3日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          6.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">AI编程实用分享</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-AI-编程范式演进"><a href="#1-AI-编程范式演进" class="headerlink" title="1. AI 编程范式演进"></a>1. AI 编程范式演进</h2><p>AI 编程在过去几年的演进大体经历了三个阶段：<strong>提示词工程 → AI-assisted Coding → AI Coding Workflow</strong>。每个阶段对应人与 AI 的协作方式不同，能力边界也不同。</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs 1c">┌────────────────────┐   ┌────────────────────┐   ┌────────────────────┐<br>│  Prompt Engineering │ → │  AI-assisted Coding │ → │  AI Coding Workflow │<br>│   <span class="hljs-string">&quot;AI 写项目&quot;</span>       │   │   <span class="hljs-string">&quot;人写，AI 辅助&quot;</span>    │   │  <span class="hljs-string">&quot;人设计，AI 执行&quot;</span>   │<br>└────────────────────┘   └────────────────────┘   └────────────────────┘<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-1-提示词工程（Prompt-Engineering）"><a href="#1-1-提示词工程（Prompt-Engineering）" class="headerlink" title="1.1 提示词工程（Prompt Engineering）"></a>1.1 提示词工程（Prompt Engineering）</h3><p><strong>时间段</strong>：早期 AI 编程（GPT-3.5 / 早期 GPT-4 时代）。</p>
+<p><strong>协作模式</strong>：用户写一段 PRD 或自然语言描述，AI 一次性生成一个项目/文件。AI 本质上是一个 “PRD → Code” 的翻译机。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>一次性生成，交互轮次少。</li>
+<li>极度依赖提示词质量，”写 prompt” 变成一门玄学。</li>
+<li>输出粒度大：整个项目 / 整个文件。</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>门槛低，零基础也能”做出东西”。</li>
+<li>原型阶段极快，适合”把想法变成能跑的 demo”。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>生成过程不可控，黑盒感强。</li>
+<li>业务细节难以自定义，修改成本高。</li>
+<li>为了让生成代码能用，PRD 要写得非常复杂——<strong>往往比直接写代码还累</strong>。</li>
+<li>代码一致性、工程规范难以保证。</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>快速原型验证（POC、demo）。</li>
+<li>0→1 的初始骨架搭建，之后再由人接手迭代。</li>
+</ul>
+<h3 id="1-2-AI-assisted-Coding（AI-辅助编程）"><a href="#1-2-AI-assisted-Coding（AI-辅助编程）" class="headerlink" title="1.2 AI-assisted Coding（AI 辅助编程）"></a>1.2 AI-assisted Coding（AI 辅助编程）</h3><p><strong>代表产品</strong>：GitHub Copilot、Cursor（Tab / Inline Edit 模式）、Tabnine 等。</p>
+<p><strong>协作模式</strong>：<strong>人主导写代码，AI 在关键点辅助</strong>。人保留架构与控制权，AI 负责”缩短写代码这一步”。</p>
+<p><strong>主要解决的问题</strong>：</p>
+<ul>
+<li>自动补全代码（行、块、函数级）。</li>
+<li>根据注释生成函数实现。</li>
+<li>帮写 SQL、正则、单测。</li>
+<li>辅助 debug、解释陌生代码。</li>
+<li>快速做局部重构。</li>
+</ul>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>IDE 深度集成，交互以 “Tab / Cmd+K / Chat” 为主。</li>
+<li>交互粒度小：一行、一段、一个函数。</li>
+<li>输出基本可预期，人随时可否决。</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>提升速度的同时保留”掌控感”。</li>
+<li>学习曲线平滑，对老工程师友好。</li>
+<li>风险可控，不容易把项目带偏。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>上限受限于”人一次能想多远”——AI 很少主动跨文件协作。</li>
+<li>重复劳动仍然存在：同一个意图要在多个文件手动展开。</li>
+<li>对”任务级”工作（比如”实现一个完整 feature”）帮助有限。</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>日常开发、维护已有项目。</li>
+<li>中大型代码库中做局部增删改。</li>
+</ul>
+<h3 id="1-3-AI-Coding-Workflow（AI-编程工作流）"><a href="#1-3-AI-Coding-Workflow（AI-编程工作流）" class="headerlink" title="1.3 AI Coding Workflow（AI 编程工作流）"></a>1.3 AI Coding Workflow（AI 编程工作流）</h3><p><strong>代表产品 / 形态</strong>：Cursor Agent、Claude Code、Codex CLI、Cline、Aider，以及各类 spec-driven / multi-agent 工作流。</p>
+<p><strong>协作模式</strong>：<strong>人定义”目标与约束”，AI 在一个受控工作流中自主执行多步任务</strong>——读代码、改代码、跑测试、看日志、再改，直到满足验收标准。人退到”架构师 / 审阅者”的位置。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>任务粒度从”一行代码”升级为”一个 feature / 一个 bug / 一次重构”。</li>
+<li>强调<strong>规划 → 执行 → 验证</strong>的闭环，而不是一次性生成。</li>
+<li>开始引入：规范（spec）、规则（rules）、记忆（memory）、工具（tools）、并行（worktree / 多 agent）。</li>
+<li>人机协作从”补全”变成”委派”。</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>吞吐量大幅提升，能处理完整任务而非片段。</li>
+<li>可重复、可审计：workflow、spec、日志让过程可回放。</li>
+<li>能真正”解放脑力”——人做决策与评审，不做体力活。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>对人的要求反而更高：需要会写 spec、会定义验收标准、会做 code review。</li>
+<li>初期搭建成本高（规则、脚本、流程）。</li>
+<li>一旦失控，AI 可能在错误方向上”努力几十分钟”，需要好的刹车机制。</li>
+<li>对模型能力、上下文窗口、工具链稳定性都有要求。</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>有一定规模的工程项目。</li>
+<li>需要并行推进多任务、多分支。</li>
+<li>有明确验收标准的 feature 开发、重构、bug 修复、迁移类工作。</li>
+</ul>
+<h3 id="1-4-三阶段对比速览"><a href="#1-4-三阶段对比速览" class="headerlink" title="1.4 三阶段对比速览"></a>1.4 三阶段对比速览</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Prompt Engineering</th>
+<th>AI-assisted Coding</th>
+<th>AI Coding Workflow</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主导者</td>
+<td>AI 主导</td>
+<td>人主导</td>
+<td>人设计、AI 执行</td>
+</tr>
+<tr>
+<td>交互粒度</td>
+<td>整个项目</td>
+<td>行 / 函数</td>
+<td>任务 / feature</td>
+</tr>
+<tr>
+<td>上下文</td>
+<td>全靠 prompt</td>
+<td>IDE 当前文件</td>
+<td>整个仓库 + 规则 + 工具</td>
+</tr>
+<tr>
+<td>可控性</td>
+<td>低</td>
+<td>高</td>
+<td>中高（需设计）</td>
+</tr>
+<tr>
+<td>天花板</td>
+<td>原型 / demo</td>
+<td>日常开发提速</td>
+<td>工程级交付</td>
+</tr>
+<tr>
+<td>对人要求</td>
+<td>会写 prompt</td>
+<td>会写代码</td>
+<td>会做架构与评审</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="2-编程最佳实践"><a href="#2-编程最佳实践" class="headerlink" title="2. 编程最佳实践"></a>2. 编程最佳实践</h2><p>范式不同，实践方式也完全不同。下面分别展开 <strong>AI-assisted Coding</strong> 与 <strong>AI Coding Workflow</strong> 两种模式下的最佳实践。</p>
+<h3 id="2-1-AI-assisted-Coding-最佳实践"><a href="#2-1-AI-assisted-Coding-最佳实践" class="headerlink" title="2.1 AI-assisted Coding 最佳实践"></a>2.1 AI-assisted Coding 最佳实践</h3><p>核心心态：<strong>AI 是副驾驶，你才是司机</strong>。目标是在保留掌控感的前提下最大化提速。</p>
+<h4 id="2-1-1-写好”局部上下文”"><a href="#2-1-1-写好”局部上下文”" class="headerlink" title="2.1.1 写好”局部上下文”"></a>2.1.1 写好”局部上下文”</h4><p>AI 在这个模式下看到的上下文有限，主要靠：</p>
+<ul>
+<li>当前文件 / 当前函数。</li>
+<li>少量相邻 tab 打开的文件。</li>
+<li>你写的注释 / 函数签名。</li>
+</ul>
+<p>实践建议：</p>
+<ul>
+<li><strong>函数签名即提示</strong>：先写清晰的函数名、参数类型、返回类型，再让 AI 补全实现。</li>
+<li><strong>用注释声明意图</strong>：在函数上方写 1-2 行意图注释，比如 <code>// 根据 user.role 过滤菜单，未登录返回空数组</code>。</li>
+<li><strong>示例驱动</strong>：先手写 1 个典型用例，AI 会顺着你的风格补剩余的。</li>
+</ul>
+<h4 id="2-1-2-善用三种交互模式"><a href="#2-1-2-善用三种交互模式" class="headerlink" title="2.1.2 善用三种交互模式"></a>2.1.2 善用三种交互模式</h4><ul>
+<li><strong>Tab 补全</strong>：写代码过程中被动接受，适合样板代码、重复模式。</li>
+<li><strong>Inline Edit（Cmd+K / ⌘K）</strong>：选中一段代码让 AI 改，适合局部重构、修 bug、翻译语言/框架。</li>
+<li><strong>Chat / Ask</strong>：提问、解释、方案讨论，不直接改代码。</li>
+</ul>
+<p>经验法则：</p>
+<ul>
+<li><strong>能用 Inline 就不用 Chat</strong>：Inline 直接作用于代码，反馈最短。</li>
+<li><strong>能用 Tab 就不用 Inline</strong>：Tab 最轻量，中断感最低。</li>
+<li><strong>Chat 留给”想清楚再动手”的场景</strong>。</li>
+</ul>
+<h4 id="2-1-3-小步提交、可回滚"><a href="#2-1-3-小步提交、可回滚" class="headerlink" title="2.1.3 小步提交、可回滚"></a>2.1.3 小步提交、可回滚</h4><ul>
+<li>每一次 AI 生成之后，<strong>先读再接受</strong>。</li>
+<li>把 AI 的产出当成同事的 PR——不审阅不合并。</li>
+<li>保持频繁 commit，出问题好回滚。</li>
+<li>把 “AI 生成” 和 “人工调整” 尽量分成不同 commit，便于回看。</li>
+</ul>
+<h4 id="2-1-4-建立个人-Prompt-Snippet-库"><a href="#2-1-4-建立个人-Prompt-Snippet-库" class="headerlink" title="2.1.4 建立个人 Prompt / Snippet 库"></a>2.1.4 建立个人 Prompt / Snippet 库</h4><p>对于反复出现的场景（生成单测、转换数据结构、写 migration 等），沉淀成：</p>
+<ul>
+<li>个人的 prompt 片段（Cursor 的 Rules / Snippets）。</li>
+<li>项目级的 <code>.cursor/rules/</code>、<code>AGENTS.md</code>。</li>
+</ul>
+<p>让 AI 输出”符合你风格”的代码，而不是每次重新调教。</p>
+<h4 id="2-1-5-常见陷阱"><a href="#2-1-5-常见陷阱" class="headerlink" title="2.1.5 常见陷阱"></a>2.1.5 常见陷阱</h4><ul>
+<li><strong>盲目 Tab</strong>：连续 Tab 接受几十行，事后发现整段方向错了。</li>
+<li><strong>让 AI 做架构决策</strong>：AI 在局部上下文做全局决策，通常不靠谱。</li>
+<li><strong>用 AI 写你看不懂的代码</strong>：一旦出 bug，你既不懂又没法调。写代码 ≠ 看代码，看不懂的就不要接受。</li>
+</ul>
+<h3 id="2-2-AI-Coding-Workflow-最佳实践"><a href="#2-2-AI-Coding-Workflow-最佳实践" class="headerlink" title="2.2 AI Coding Workflow 最佳实践"></a>2.2 AI Coding Workflow 最佳实践</h3><p>核心心态：<strong>你是架构师 / PM，AI 是执行团队</strong>。目标是把”任务”安全、稳定地交出去。</p>
+<h4 id="2-2-1-明确任务边界与验收标准"><a href="#2-2-1-明确任务边界与验收标准" class="headerlink" title="2.2.1 明确任务边界与验收标准"></a>2.2.1 明确任务边界与验收标准</h4><p>Workflow 模式最大的风险是 AI “努力错方向”。动手前务必想清楚：</p>
+<ul>
+<li><strong>Done 的定义</strong>：什么条件下认为完成？（通过哪些测试？满足哪些行为？）</li>
+<li><strong>边界</strong>：哪些文件/模块不能动？</li>
+<li><strong>约束</strong>：性能、兼容性、API 不变等硬约束。</li>
+</ul>
+<p>落地形式：</p>
+<ul>
+<li>一段明确的任务描述（包含背景、目标、非目标、验收标准）。</li>
+<li>或者使用 spec 文件（见 §3.3 OpenSpec）。</li>
+</ul>
+<h4 id="2-2-2-Plan-→-Execute-→-Verify-的闭环"><a href="#2-2-2-Plan-→-Execute-→-Verify-的闭环" class="headerlink" title="2.2.2 Plan → Execute → Verify 的闭环"></a>2.2.2 Plan → Execute → Verify 的闭环</h4><p>推荐流程：</p>
+<ol>
+<li><strong>Plan</strong>：让 AI 先产出一份”改动计划”（哪些文件、大致思路、风险点），不写代码。</li>
+<li><strong>Review Plan</strong>：人审阅、修正方向。</li>
+<li><strong>Execute</strong>：AI 按 plan 执行，小步推进。</li>
+<li><strong>Verify</strong>：跑测试、lint、类型检查、手动 smoke test。</li>
+<li><strong>Iterate</strong>：有问题回到步骤 1 或 3。</li>
+</ol>
+<p>关键动作：**每一步都要有”可验证的信号”**——编译过、测试过、lint 过、预览截图 OK。让 AI 自己能看到这些信号，它才有能力自我修正。</p>
+<h4 id="2-2-3-为项目建立”AI-可读的知识”"><a href="#2-2-3-为项目建立”AI-可读的知识”" class="headerlink" title="2.2.3 为项目建立”AI 可读的知识”"></a>2.2.3 为项目建立”AI 可读的知识”</h4><p>一个 AI 友好的仓库应该具备：</p>
+<ul>
+<li><strong>README / AGENTS.md</strong>：让 AI 快速理解项目是什么、怎么跑、约定是什么。</li>
+<li><strong>规则文件</strong>（<code>.cursor/rules/</code>、<code>CLAUDE.md</code> 等）：约束代码风格、目录结构、禁止事项。</li>
+<li><strong>清晰的脚本</strong>：<code>npm test</code>、<code>make lint</code>、<code>pnpm typecheck</code> 等一键可跑。</li>
+<li><strong>稳定的测试</strong>：让 AI 能通过”跑测试”判断自己对不对。</li>
+</ul>
+<p>一句话：<strong>让 AI 看到的项目，和一个新入职工程师看到的项目一样清晰</strong>。</p>
+<h4 id="2-2-4-控制上下文，避免”上下文投毒”"><a href="#2-2-4-控制上下文，避免”上下文投毒”" class="headerlink" title="2.2.4 控制上下文，避免”上下文投毒”"></a>2.2.4 控制上下文，避免”上下文投毒”</h4><ul>
+<li>不要把无关的巨型文件/日志塞进上下文。</li>
+<li>任务越具体，上下文越应聚焦。</li>
+<li>长会话出现”跑偏”时，<strong>果断重开一轮</strong>，别硬救。</li>
+<li>重要决策、背景写成文件沉淀下来，而不是依赖对话记忆。</li>
+</ul>
+<h4 id="2-2-5-永远保留”刹车”与可回滚"><a href="#2-2-5-永远保留”刹车”与可回滚" class="headerlink" title="2.2.5 永远保留”刹车”与可回滚"></a>2.2.5 永远保留”刹车”与可回滚</h4><ul>
+<li>所有 AI 自主执行都在<strong>独立分支 / worktree</strong> 上进行（见 §3.1）。</li>
+<li>开启 git 保护：敏感分支禁止直接 push。</li>
+<li>危险操作（删文件、改 CI、改依赖）要求人工确认。</li>
+<li>出问题时第一反应是 <code>git reset / checkout</code>，不是和 AI”争辩”。</li>
+</ul>
+<h4 id="2-2-6-Review-永远不能省"><a href="#2-2-6-Review-永远不能省" class="headerlink" title="2.2.6 Review 永远不能省"></a>2.2.6 Review 永远不能省</h4><p>AI 产出的代码 ≠ 可以合入的代码。Review 清单至少包含：</p>
+<ul>
+<li>逻辑是否真的满足验收标准（别被”测试通过”骗了）。</li>
+<li>有没有过度实现 / 写了一堆没用的抽象。</li>
+<li>有没有偷偷改到不该改的地方。</li>
+<li>依赖、配置、迁移是否完整。</li>
+<li>安全 / 性能明显问题。</li>
+</ul>
+<hr>
+<h2 id="3-编程技巧"><a href="#3-编程技巧" class="headerlink" title="3. 编程技巧"></a>3. 编程技巧</h2><p>一些在 AI Coding Workflow 下显著提效的具体技巧。</p>
+<h3 id="3-1-Worktree-并行"><a href="#3-1-Worktree-并行" class="headerlink" title="3.1 Worktree 并行"></a>3.1 Worktree 并行</h3><p><strong>问题</strong>：一个仓库一个工作区时，AI 跑一个任务就占用整个目录——不能同时做 A feature 和修 B bug。</p>
+<p><strong>解决方案</strong>：用 <code>git worktree</code> 为每个任务开一个独立工作目录，<strong>一个任务一个 worktree</strong>，互不干扰。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">git worktree add ../myproj-feat-login    -b feat/login<br>git worktree add ../myproj-fix-payment   -b fix/payment<br>git worktree add ../myproj-refactor-api  -b refactor/api<br></code></pre></td></tr></table></figure>
+
+<p>搭配 AI Workflow 的玩法：</p>
+<ul>
+<li><strong>多窗口并行</strong>：开 3 个 Cursor/IDE 窗口，各自跑一个任务。</li>
+<li><strong>多 agent 并行</strong>：每个 worktree 挂一个 agent，同时推进。</li>
+<li><strong>物理隔离</strong>：一个 agent 乱改不影响其他任务。</li>
+<li><strong>Review 友好</strong>：每个 worktree 对应一个 PR，天然干净。</li>
+</ul>
+<p>清理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">git worktree list<br>git worktree remove ../myproj-feat-login<br></code></pre></td></tr></table></figure>
+
+<p>经验：</p>
+<ul>
+<li>命名规范：<code>&lt;repo&gt;-&lt;type&gt;-&lt;slug&gt;</code>，便于识别。</li>
+<li>共享的脚本、依赖、环境通过根目录或脚本统一管理，避免每个 worktree 重复配置。</li>
+<li>一台机器开 3-5 个并行任务是比较舒服的上限，再多人脑 review 跟不上。</li>
+</ul>
+<h3 id="3-2-多-Agent-模型"><a href="#3-2-多-Agent-模型" class="headerlink" title="3.2 多 Agent 模型"></a>3.2 多 Agent 模型</h3><p>单 agent 容易在”写代码 + 评审 + 决策”之间反复横跳，效果打折。进阶做法是<strong>按角色拆分 agent</strong>，让每个 agent 专注一件事。</p>
+<p>常见角色划分：</p>
+<ul>
+<li><strong>Planner / Architect</strong>：负责读需求、拆任务、产出 plan，不写代码。</li>
+<li><strong>Coder / Implementer</strong>：按 plan 写代码、跑测试，不做架构决策。</li>
+<li><strong>Reviewer / Critic</strong>：专门挑毛病——逻辑漏洞、安全问题、过度设计。</li>
+<li><strong>Tester / QA</strong>：专门补测试、跑 e2e、回归。</li>
+<li><strong>Doc Writer</strong>：负责注释、文档、changelog。</li>
+</ul>
+<p>协作模式：</p>
+<ul>
+<li><strong>串行流水线</strong>：Planner → Coder → Reviewer → Tester，上一个的输出是下一个的输入。</li>
+<li><strong>并行分工</strong>：多 Coder 同时做不同子任务（配合 §3.1 worktree）。</li>
+<li><strong>对抗式</strong>：Coder 写，Reviewer 挑，循环到 Reviewer 挑不出问题。</li>
+</ul>
+<p>收益：</p>
+<ul>
+<li>每个 agent 的 prompt / 规则更聚焦，效果更好。</li>
+<li>避免”自己写自己评”的盲区。</li>
+<li>人只需要在关键节点介入，而不是每一步都盯着。</li>
+</ul>
+<p>注意事项：</p>
+<ul>
+<li>Agent 之间的交接要有<strong>结构化的产物</strong>（plan 文件、diff、review 报告），不要靠”记忆”。</li>
+<li>防止 agent 无限循环：设置最大轮次、预算、超时。</li>
+</ul>
+<h3 id="3-3-OpenSpec"><a href="#3-3-OpenSpec" class="headerlink" title="3.3 OpenSpec"></a>3.3 OpenSpec</h3><p><strong>定位</strong>：一种”spec-driven development”工作流——<strong>先写规范，再生成实现</strong>，规范本身是可版本化的 markdown 文件。</p>
+<p>核心思想：</p>
+<ul>
+<li>把”我们要做什么、怎么验收”写成 spec（markdown + 结构化字段）。</li>
+<li>spec 成为人与 AI 的共同契约，也是项目的长期资产。</li>
+<li>所有变更先改 spec，再由 AI 根据 spec 改代码。</li>
+</ul>
+<p>典型流程：</p>
+<ol>
+<li><strong>新建 change</strong>：描述一次变更的动机、目标、受影响的 spec。</li>
+<li><strong>草拟 / 修订 spec</strong>：在 markdown 中细化行为、接口、验收。</li>
+<li><strong>AI 基于 spec 实施</strong>：生成代码、测试。</li>
+<li><strong>验证 &amp; 归档</strong>：跑测试，确认符合 spec，合入并归档这次 change。</li>
+</ol>
+<p>价值：</p>
+<ul>
+<li>任务描述被结构化，AI 不容易跑偏。</li>
+<li>spec 随代码一起演进，<strong>文档不再过时</strong>。</li>
+<li>新人（包括新 agent）看 spec 就能快速理解系统。</li>
+<li>天然适合多人 / 多 agent 协作——大家基于同一份 spec 工作。</li>
+</ul>
+<p>适用场景：</p>
+<ul>
+<li>中长期维护的项目。</li>
+<li>团队协作、多 agent 协作。</li>
+<li>对行为正确性要求高的模块（计费、权限、协议）。</li>
+</ul>
+<p>对比传统 PRD：spec 更贴近代码、更结构化、更可执行（能直接喂给 AI）。</p>
+<h3 id="3-4-oh-my-codex（OMX）"><a href="#3-4-oh-my-codex（OMX）" class="headerlink" title="3.4 oh-my-codex（OMX）"></a>3.4 oh-my-codex（OMX）</h3><p><strong>定位</strong>：围绕 Codex CLI / AI 编程场景的<strong>工作流插件集 / 扩展框架</strong>，把上面提到的很多实践”打包”成可直接调用的 skill 与模式。</p>
+<p>常用能力（按场景）：</p>
+<ul>
+<li><strong>$plan</strong>：策略性规划，可选深度访谈（Socratic interview），先把需求聊清楚再动手。</li>
+<li><strong>$autopilot</strong>：从想法到可运行代码的全自动执行。</li>
+<li><strong>$ralph</strong>：自引用循环，反复迭代直到通过架构师验收。</li>
+<li><strong>$ultrawork</strong>：高并发并行执行引擎，吞吐优先。</li>
+<li><strong>$team</strong>：多 agent 协作编排（基于 tmux），天然配合 §3.2 多 agent 模型。</li>
+<li><strong>$code-review / $security-review</strong>：成体系的代码审查与安全审查。</li>
+<li><strong>$wiki / $note</strong>：项目知识沉淀，抗 context 压缩。</li>
+<li><strong>$hud / $trace</strong>：运行状态可视化与流程追踪。</li>
+</ul>
+<p>它解决了什么：</p>
+<ul>
+<li>把”好 prompt / 好工作流”从一次性经验变成<strong>可复用的 skill</strong>。</li>
+<li>让 AI 编程从”一人一招”变成”团队共享的方法论”。</li>
+<li>提供统一的 <strong>cancel / doctor / setup</strong> 入口，降低维护成本。</li>
+</ul>
+<p>何时该用：</p>
+<ul>
+<li>你已经习惯用 Cursor / Codex / Claude Code 做 workflow 级开发。</li>
+<li>想把个人经验沉淀成可重复的流程。</li>
+<li>需要并行、多 agent、长任务编排等进阶能力。</li>
+</ul>
+<hr>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4. 小结"></a>4. 小结</h2><ul>
+<li>范式上：从 <strong>Prompt Engineering → AI-assisted → AI Coding Workflow</strong>，人的角色从”写 prompt 的人”变成”定义目标与验收的架构师”。</li>
+<li>实践上：<strong>AI-assisted</strong> 关注”局部提速、保持掌控”，<strong>AI Coding Workflow</strong> 关注”任务委派、闭环验证”。</li>
+<li>技巧上：<strong>worktree 并行 + 多 agent 分工 + OpenSpec 结构化 + oh-my-codex 工作流</strong>，可以把 AI 编程从”个人技巧”升级为”工程体系”。</li>
+</ul>
+<p>一句话收尾：<strong>把 AI 当成团队，而不是工具；把自己当成架构师，而不是码农。</strong></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BC%96%E7%A8%8B/">#编程</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AI编程实用分享</div>
+      <div>https://a3d21.github.io/2026/05/03/2026-05-03-AI-Coding-Practices/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>a3d21</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年5月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/05/10/2026-05-10-go-reverse-proxy-gateway/" title="Go反向代理避坑指南">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Go反向代理避坑指南</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/05/02/2026-05-02-a-lite-go-web-framework/" title="一个轻量的Go Web框架">
+                        <span class="hidden-mobile">一个轻量的Go Web框架</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

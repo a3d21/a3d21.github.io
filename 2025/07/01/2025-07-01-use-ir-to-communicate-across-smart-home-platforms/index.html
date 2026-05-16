@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="a3d21">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="智能家居平台有很多：小米、华为、涂鸦、aqara…，无法互通，很不方便。尤其是当买了多个平台设备时，每次操作都得想想用哪个平台APP，呼叫哪个语音助手去执行。 但几乎所有平台都支持红外(IR)，而且红外是一种本地协议，可以用红外来本地化打通不同平台。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[智能家居]跨平台智能家居——红外方案">
+<meta property="og:url" content="https://a3d21.github.io/2025/07/01/2025-07-01-use-ir-to-communicate-across-smart-home-platforms/index.html">
+<meta property="og:site_name" content="a3d21&#39;s blog">
+<meta property="og:description" content="智能家居平台有很多：小米、华为、涂鸦、aqara…，无法互通，很不方便。尤其是当买了多个平台设备时，每次操作都得想想用哪个平台APP，呼叫哪个语音助手去执行。 但几乎所有平台都支持红外(IR)，而且红外是一种本地协议，可以用红外来本地化打通不同平台。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjczcHgiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHN0eWxlPSJ3aWR0aDo2NzdweDtoZWlnaHQ6NzNweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2NzcgNzMiIHdpZHRoPSI2NzdweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PD9wbGFudHVtbCAxLjIwMjYuNGJldGEyPz48ZGVmcy8+PGc+PCEtLWVudGl0eSBhLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iYSIgZGF0YS1zb3VyY2UtbGluZT0iMSIgaWQ9ImVudDAwMDIiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iNTIuNTkzOCIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTAwLjkyMzUiIHg9IjciIHk9IjciLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS41NzY5IiB4PSIxNyIgeT0iMjkuOTk1MSI+QSYjMjQxNzk7JiMyMTQ4ODsmIzM1Nzc0OyYjMjI3OTE7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgwLjkyMzUiIHg9IjE3IiB5PSI0Ni4yOTIiPigmIzI0MTAyOyYjMzI0MTg7JiMyMjgwNjsmIzM4ODk5OyYjMzE2NjU7KTwvdGV4dD48L2c+PCEtLWVudGl0eSBpci0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImlyIiBkYXRhLXNvdXJjZS1saW5lPSIyIiBpZD0iZW50MDAwMyI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI3NS44NTYzIiB4PSIyNDcuNTMiIHk9IjE1LjE0Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuODU2MyIgeD0iMjU3LjUzIiB5PSIzOC4xMzUxIj5JUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PCEtLWVudGl0eSBoYS0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImhhIiBkYXRhLXNvdXJjZS1saW5lPSIzIiBpZD0iZW50MDAwNCI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI1Mi41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMjkuNTczMiIgeD0iMzg1LjY4IiB5PSI3Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA5LjU3MzIiIHg9IjM5NS42OCIgeT0iMjkuOTk1MSI+SG9tZSBBc3Npc3RhbnQ8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjYuOTIzNiIgeD0iMzk1LjY4IiB5PSI0Ni4yOTIiPigmIzI1NTExOyYjMjEwNDY7JiMyMDAxMzsmIzI0NTE1Oyk8L3RleHQ+PC9nPjwhLS1lbnRpdHkgYi0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImIiIGRhdGEtc291cmNlLWxpbmU9IjQiIGlkPSJlbnQwMDA1Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijg1LjYwNDIiIHg9IjU3Ny42NiIgeT0iMTUuMTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS42MDQyIiB4PSI1ODcuNjYiIHk9IjM4LjEzNTEiPkImIzI0MTc5OyYjMjE0ODg7JiMzNTc3NDsmIzIyNzkxOzwvdGV4dD48L2c+PCEtLWxpbmsgYSB0byBpci0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJlbnQwMDAyIiBkYXRhLWVudGl0eS0yPSJlbnQwMDAzIiBkYXRhLWxpbmstdHlwZT0iZGVwZW5kZW5jeSIgZGF0YS1zb3VyY2UtbGluZT0iNiIgaWQ9ImxuazYiPjxwYXRoIGQ9Ik0xMDguMzUsMzMuMjkgQzE1MC4zNCwzMy4yOSAyMDMuMDMsMzMuMjkgMjQxLjE0LDMzLjI5IiBmaWxsPSJub25lIiBpZD0iYS10by1pciIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjQ3LjE0LDMzLjI5LDIzOC4xNCwyOS4yOSwyNDIuMTQsMzMuMjksMjM4LjE0LDM3LjI5LDI0Ny4xNCwzMy4yOSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwMy44NjY4IiB4PSIxMjYuMjMiIHk9IjI2LjM1NjkiPiYjMjE0NTc7JiMzNjg2NTsmIzMzMjU4OyYjMjM0NTA7JiMyMDA0MTtJUiYjMjE2Mjk7JiMyMDE5Njs8L3RleHQ+PC9nPjwhLS1saW5rIGlyIHRvIGhhLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImVudDAwMDMiIGRhdGEtZW50aXR5LTI9ImVudDAwMDQiIGRhdGEtbGluay10eXBlPSJkZXBlbmRlbmN5IiBkYXRhLXNvdXJjZS1saW5lPSI3IiBpZD0ibG5rNyI+PHBhdGggZD0iTTMyMy43MywzMy4yOSBDMzQyLjAxLDMzLjI5IDM1OC40LDMzLjI5IDM3OS4yNSwzMy4yOSIgZmlsbD0ibm9uZSIgaWQ9ImlyLXRvLWhhIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzODUuMjUsMzMuMjksMzc2LjI1LDI5LjI5LDM4MC4yNSwzMy4yOSwzNzYuMjUsMzcuMjksMzg1LjI1LDMzLjI5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjM0MS41MyIgeT0iMjYuMzU2OSI+JiMyMDI1NjsmIzM2ODgyOzwvdGV4dD48L2c+PCEtLWxpbmsgaGEgdG8gYi0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJlbnQwMDA0IiBkYXRhLWVudGl0eS0yPSJlbnQwMDA1IiBkYXRhLWxpbmstdHlwZT0iZGVwZW5kZW5jeSIgZGF0YS1zb3VyY2UtbGluZT0iOCIgaWQ9ImxuazgiPjxwYXRoIGQ9Ik01MTUuNywzMy4yOSBDNTM2LjMsMzMuMjkgNTUyLjU0LDMzLjI5IDU3MS4yMSwzMy4yOSIgZmlsbD0ibm9uZSIgaWQ9ImhhLXRvLWIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjU3Ny4yMSwzMy4yOSw1NjguMjEsMjkuMjksNTcyLjIxLDMzLjI5LDU2OC4yMSwzNy4yOSw1NzcuMjEsMzMuMjkiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyNiIgeD0iNTMzLjQ1IiB5PSIyNi4zNTY5Ij4mIzI1NTExOyYjMjEwNDY7PC90ZXh0PjwvZz48P3BsYW50dW1sLXNyYyBBcWZEQmFkQ0l5ejlMTDFvVkJmcHl6Ri0zSV9NeE5rd2YzcWNKLUZmWmNORlRvcndrY0pRb19jUmR3X1JnQWNhYTVZaWFDWExYRDNYNlZJaVItY3BBVGtVcGJtMWJpbWlHZlJyb0N6RExOMGlCaXVpMWVnSzAwcnlyaFZ5UVNVczlwbE1GanRWMzM0ajB5S3U5c0c3V0VNSmtCV0k1TkpqVzBQUkFJV3p4UF91aWc3bkhWa2dmLWpjRlRkUHdIZHFURUJVOXhrTkE3NWI1ZTdLUDJHMnJKcFBpLTFibW9HYmhXb21qWUlXMkNISTlHMDA/PjwvZz48L3N2Zz4=">
+<meta property="og:image" content="https://a3d21.github.io/img/send-nec-ir-action.png">
+<meta property="og:image" content="https://a3d21.github.io/img/ha-listen-event.png">
+<meta property="og:image" content="https://a3d21.github.io/img/add-ir-device.jpg">
+<meta property="og:image" content="https://a3d21.github.io/img/ha-listen-ir-event.png">
+<meta property="og:image" content="https://a3d21.github.io/img/node-red-listen-ir-event.png">
+<meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IlNFUVVFTkNFIiBoZWlnaHQ9IjMzM3B4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6NTM1cHg7aGVpZ2h0OjMzM3B4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUzNSAzMzMiIHdpZHRoPSI1MzVweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PD9wbGFudHVtbCAxLjIwMjYuNGJldGEyPz48ZGVmcy8+PGc+PHJlY3QgZmlsbD0iI0RERERERCIgaGVpZ2h0PSIzMjAuMjU3OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMjY1Ljg1NTciIHg9Ijc0Ljc2NzciIHk9IjYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyNiIgeD0iMTk0LjY5NTYiIHk9IjE4LjA2NjkiPiYjMjAwNzA7JiMyNTE1MTs8L3RleHQ+PHJlY3QgZmlsbD0iI0RERERERCIgaGVpZ2h0PSIzMjAuMjU3OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTg1Ljg1NTkiIHg9IjM0Mi42MjM0IiB5PSI2Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjQyMi41NTEzIiB5PSIxOC4wNjY5Ij4mIzIzNDU4OyYjMjEzODE7PC90ZXh0PjxnIGNsYXNzPSJwYXJ0aWNpcGFudC1saWZlbGluZSIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0idSIgZGF0YS1zb3VyY2UtbGluZT0iMSIgaWQ9InBhcnQxLWxpZmVsaW5lIj48Zz48dGl0bGU+VXNlcjwvdGl0bGU+PHJlY3QgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjAwMDAwIiBoZWlnaHQ9IjE2NS42NjQxIiB3aWR0aD0iOCIgeD0iMTkuOTU1MSIgeT0iODEuMjk2OSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1kYXNoYXJyYXk6NSw1OyIgeDE9IjIzIiB4Mj0iMjMiIHkxPSI4MS4yOTY5IiB5Mj0iMjQ2Ljk2MDkiLz48L2c+PC9nPjxnIGNsYXNzPSJwYXJ0aWNpcGFudC1saWZlbGluZSIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MiIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iczIiIGRhdGEtc291cmNlLWxpbmU9IjQiIGlkPSJwYXJ0Mi1saWZlbGluZSI+PGc+PHRpdGxlPi4uLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjEwOS43Njc2IiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMTEyLjc2NzciIHgyPSIxMTIuNzY3NyIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQzIiBkYXRhLXF1YWxpZmllZC1uYW1lPSJpcjIiIGRhdGEtc291cmNlLWxpbmU9IjUiIGlkPSJwYXJ0My1saWZlbGluZSI+PGc+PHRpdGxlPi4uSVIuLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjIwMy42OTU2IiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMjA2Ljc2NzUiIHgyPSIyMDYuNzY3NSIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQ0IiBkYXRhLXF1YWxpZmllZC1uYW1lPSJmYW4iIGRhdGEtc291cmNlLWxpbmU9IjYiIGlkPSJwYXJ0NC1saWZlbGluZSI+PGc+PHRpdGxlPi4uLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjI5Ny42MjM1IiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMzAwLjYyMzYiIHgyPSIzMDAuNjIzNiIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQ1IiBkYXRhLXF1YWxpZmllZC1uYW1lPSJzMSIgZGF0YS1zb3VyY2UtbGluZT0iMTAiIGlkPSJwYXJ0NS1saWZlbGluZSI+PGc+PHRpdGxlPi4uLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjM3Ny42MjMzIiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMzgwLjYyMzQiIHgyPSIzODAuNjIzNCIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQ2IiBkYXRhLXF1YWxpZmllZC1uYW1lPSJpcjEiIGRhdGEtc291cmNlLWxpbmU9IjExIiBpZD0icGFydDYtbGlmZWxpbmUiPjxnPjx0aXRsZT4uLklSLi4uPC90aXRsZT48cmVjdCBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjAuMDAwMDAiIGhlaWdodD0iMTY1LjY2NDEiIHdpZHRoPSI4IiB4PSI0NzEuNTUxMiIgeT0iODEuMjk2OSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1kYXNoYXJyYXk6NSw1OyIgeDE9IjQ3NC42MjMyIiB4Mj0iNDc0LjYyMzIiIHkxPSI4MS4yOTY5IiB5Mj0iMjQ2Ljk2MDkiLz48L2c+PC9nPjxnIGNsYXNzPSJwYXJ0aWNpcGFudCBwYXJ0aWNpcGFudC1oZWFkIiBkYXRhLWVudGl0eS11aWQ9InBhcnQxIiBkYXRhLXF1YWxpZmllZC1uYW1lPSJ1IiBkYXRhLXNvdXJjZS1saW5lPSIxIiBpZD0icGFydDEtaGVhZCI+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMzEuOTEwMiIgeD0iNSIgeT0iNzcuOTk1MSI+VXNlcjwvdGV4dD48ZWxsaXBzZSBjeD0iMjMuOTU1MSIgY3k9IjEzLjUiIGZpbGw9IiNFMkUyRjAiIHJ4PSI4IiByeT0iOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHBhdGggZD0iTTIzLjk1NTEsMjEuNSBMMjMuOTU1MSw0OC41IE0xMC45NTUxLDI5LjUgTDM2Ljk1NTEsMjkuNSBNMjMuOTU1MSw0OC41IEwxMC45NTUxLDYzLjUgTTIzLjk1NTEsNDguNSBMMzYuOTU1MSw2My41IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LXRhaWwiIGRhdGEtZW50aXR5LXVpZD0icGFydDEiIGRhdGEtcXVhbGlmaWVkLW5hbWU9InUiIGRhdGEtc291cmNlLWxpbmU9IjEiIGlkPSJwYXJ0MS10YWlsIj48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzMS45MTAyIiB4PSI1IiB5PSIyNTguOTU2MSI+VXNlcjwvdGV4dD48ZWxsaXBzZSBjeD0iMjMuOTU1MSIgY3k9IjI3MC43NTc4IiBmaWxsPSIjRTJFMkYwIiByeD0iOCIgcnk9IjgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxwYXRoIGQ9Ik0yMy45NTUxLDI3OC43NTc4IEwyMy45NTUxLDMwNS43NTc4IE0xMC45NTUxLDI4Ni43NTc4IEwzNi45NTUxLDI4Ni43NTc4IE0yMy45NTUxLDMwNS43NTc4IEwxMC45NTUxLDMyMC43NTc4IE0yMy45NTUxLDMwNS43NTc4IEwzNi45NTUxLDMyMC43NTc4IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LWhlYWQiIGRhdGEtZW50aXR5LXVpZD0icGFydDIiIGRhdGEtcXVhbGlmaWVkLW5hbWU9InMyIiBkYXRhLXNvdXJjZS1saW5lPSI0IiBpZD0icGFydDItaGVhZCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSI0Ni41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSI3OC43Njc3IiB5PSIzMy43MDMxIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuOTk5OCIgeD0iODUuNzY3NyIgeT0iNTMuNjk4MiI+JiMyMDA3MDsmIzI1MTUxOyYjMzg4OTk7JiMzMTY2NTs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuNzgwMiIgeD0iODcuMzc3NSIgeT0iNjkuOTk1MSI+KCYjMTk5ODE7JiMyNDEwMjtJUik8L3RleHQ+PC9nPjxnIGNsYXNzPSJwYXJ0aWNpcGFudCBwYXJ0aWNpcGFudC10YWlsIiBkYXRhLWVudGl0eS11aWQ9InBhcnQyIiBkYXRhLXF1YWxpZmllZC1uYW1lPSJzMiIgZGF0YS1zb3VyY2UtbGluZT0iNCIgaWQ9InBhcnQyLXRhaWwiPjxyZWN0IGZpbGw9IiNFMkUyRjAiIGhlaWdodD0iNDYuNTkzOCIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNjkuOTk5OCIgeD0iNzguNzY3NyIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NS45OTk4IiB4PSI4NS43Njc3IiB5PSIyNjUuOTU2MSI+JiMyMDA3MDsmIzI1MTUxOyYjMzg4OTk7JiMzMTY2NTs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuNzgwMiIgeD0iODcuMzc3NSIgeT0iMjgyLjI1MjkiPigmIzE5OTgxOyYjMjQxMDI7SVIpPC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtaGVhZCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MyIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iaXIyIiBkYXRhLXNvdXJjZS1saW5lPSI1IiBpZD0icGFydDMtaGVhZCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSIzMC4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Ny44NTYxIiB4PSIxNTguNzY3NSIgeT0iNTAiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My44NTYxIiB4PSIxNjUuNzY3NSIgeT0iNjkuOTk1MSI+JiMyMDA3MDsmIzI1MTUxO0lSJiMyNTUwOTsmIzI1OTEwOyYjMjIxMjA7PC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtdGFpbCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MyIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iaXIyIiBkYXRhLXNvdXJjZS1saW5lPSI1IiBpZD0icGFydDMtdGFpbCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSIzMC4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Ny44NTYxIiB4PSIxNTguNzY3NSIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My44NTYxIiB4PSIxNjUuNzY3NSIgeT0iMjY1Ljk1NjEiPiYjMjAwNzA7JiMyNTE1MTtJUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LWhlYWQiIGRhdGEtZW50aXR5LXVpZD0icGFydDQiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImZhbiIgZGF0YS1zb3VyY2UtbGluZT0iNiIgaWQ9InBhcnQ0LWhlYWQiPjxyZWN0IGZpbGw9IiNFMkUyRjAiIGhlaWdodD0iMzAuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNjkuOTk5OCIgeD0iMjY2LjYyMzYiIHk9IjUwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuOTk5OCIgeD0iMjczLjYyMzYiIHk9IjY5Ljk5NTEiPiYjMjAwNzA7JiMyNTE1MTsmIzM5MTE4OyYjMjUxNTk7PC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtdGFpbCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NCIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iZmFuIiBkYXRhLXNvdXJjZS1saW5lPSI2IiBpZD0icGFydDQtdGFpbCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSIzMC4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSIyNjYuNjIzNiIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NS45OTk4IiB4PSIyNzMuNjIzNiIgeT0iMjY1Ljk1NjEiPiYjMjAwNzA7JiMyNTE1MTsmIzM5MTE4OyYjMjUxNTk7PC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtaGVhZCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iczEiIGRhdGEtc291cmNlLWxpbmU9IjEwIiBpZD0icGFydDUtaGVhZCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSI0Ni41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSIzNDYuNjIzNCIgeT0iMzMuNzAzMSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU1Ljk5OTgiIHg9IjM1My42MjM0IiB5PSI1My42OTgyIj4mIzIzNDU4OyYjMjEzODE7JiMzODg5OTsmIzMxNjY1OzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzOC43ODAyIiB4PSIzNjIuMjMzMiIgeT0iNjkuOTk1MSI+KCYjMjQxMDI7SVIpPC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtdGFpbCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iczEiIGRhdGEtc291cmNlLWxpbmU9IjEwIiBpZD0icGFydDUtdGFpbCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSI0Ni41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSIzNDYuNjIzNCIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NS45OTk4IiB4PSIzNTMuNjIzNCIgeT0iMjY1Ljk1NjEiPiYjMjM0NTg7JiMyMTM4MTsmIzM4ODk5OyYjMzE2NjU7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjM4Ljc4MDIiIHg9IjM2Mi4yMzMyIiB5PSIyODIuMjUyOSI+KCYjMjQxMDI7SVIpPC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtaGVhZCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NiIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iaXIxIiBkYXRhLXNvdXJjZS1saW5lPSIxMSIgaWQ9InBhcnQ2LWhlYWQiPjxyZWN0IGZpbGw9IiNFMkUyRjAiIGhlaWdodD0iMzAuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iOTcuODU2MSIgeD0iNDI2LjYyMzIiIHk9IjUwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODMuODU2MSIgeD0iNDMzLjYyMzIiIHk9IjY5Ljk5NTEiPiYjMjM0NTg7JiMyMTM4MTtJUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LXRhaWwiIGRhdGEtZW50aXR5LXVpZD0icGFydDYiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImlyMSIgZGF0YS1zb3VyY2UtbGluZT0iMTEiIGlkPSJwYXJ0Ni10YWlsIj48cmVjdCBmaWxsPSIjRTJFMkYwIiBoZWlnaHQ9IjMwLjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijk3Ljg1NjEiIHg9IjQyNi42MjMyIiB5PSIyNDUuOTYwOSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgzLjg1NjEiIHg9IjQzMy42MjMyIiB5PSIyNjUuOTU2MSI+JiMyMzQ1ODsmIzIxMzgxO0lSJiMyNTUwOTsmIzI1OTEwOyYjMjIxMjA7PC90ZXh0PjwvZz48ZyBjbGFzcz0ibWVzc2FnZSIgZGF0YS1lbnRpdHktMT0icGFydDEiIGRhdGEtZW50aXR5LTI9InBhcnQyIiBkYXRhLXNvdXJjZS1saW5lPSIxNCIgaWQ9Im1zZzEiPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTAxLjc2NzYsMTA4LjQyOTcsMTExLjc2NzYsMTEyLjQyOTcsMTAxLjc2NzYsMTE2LjQyOTcsMTA1Ljc2NzYsMTEyLjQyOTciIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjMuOTU1MSIgeDI9IjEwNy43Njc2IiB5MT0iMTEyLjQyOTciIHkyPSIxMTIuNDI5NyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY1LjgxMjUiIHg9IjMwLjk1NTEiIHk9IjEwNy4zNjM4Ij5zYXk6JiMyNDMyMDsmIzM5MTE4OyYjMjUxNTk7PC90ZXh0PjwvZz48ZyBjbGFzcz0ibWVzc2FnZSIgZGF0YS1lbnRpdHktMT0icGFydDIiIGRhdGEtZW50aXR5LTI9InBhcnQ1IiBkYXRhLXNvdXJjZS1saW5lPSIxNSIgaWQ9Im1zZzIiPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMzY5LjYyMzMsMTM3LjU2MjUsMzc5LjYyMzMsMTQxLjU2MjUsMzY5LjYyMzMsMTQ1LjU2MjUsMzczLjYyMzMsMTQxLjU2MjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7c3Ryb2tlLWRhc2hhcnJheToyLDI7IiB4MT0iMTEzLjc2NzYiIHgyPSIzNzUuNjIzMyIgeTE9IjE0MS41NjI1IiB5Mj0iMTQxLjU2MjUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzOSIgeD0iMTIwLjc2NzYiIHk9IjEzNi40OTY2Ij4mIzIwMTEzOyYjMzU4NDM7JiMyOTk5Mjs8L3RleHQ+PC9nPjxnIGNsYXNzPSJtZXNzYWdlIiBkYXRhLWVudGl0eS0xPSJwYXJ0NSIgZGF0YS1lbnRpdHktMj0icGFydDYiIGRhdGEtc291cmNlLWxpbmU9IjE2IiBpZD0ibXNnMyI+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI0NjMuNTUxMiwxNjYuNjk1Myw0NzMuNTUxMiwxNzAuNjk1Myw0NjMuNTUxMiwxNzQuNjk1Myw0NjcuNTUxMiwxNzAuNjk1MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIzODEuNjIzMyIgeDI9IjQ2OS41NTEyIiB5MT0iMTcwLjY5NTMiIHkyPSIxNzAuNjk1MyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI1Ljg2NjciIHg9IjM4OC42MjMzIiB5PSIxNjUuNjI5NCI+JiMyMTQ1NztJUjwvdGV4dD48L2c+PGcgY2xhc3M9Im1lc3NhZ2UiIGRhdGEtZW50aXR5LTE9InBhcnQ2IiBkYXRhLWVudGl0eS0yPSJwYXJ0MyIgZGF0YS1zb3VyY2UtbGluZT0iMTciIGlkPSJtc2c0Ij48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIxOC42OTU2LDE5NS44MjgxLDIwOC42OTU2LDE5OS44MjgxLDIxOC42OTU2LDIwMy44MjgxLDIxNC42OTU2LDE5OS44MjgxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjIxMi42OTU2IiB4Mj0iNDc0LjU1MTIiIHkxPSIxOTkuODI4MSIgeTI9IjE5OS44MjgxIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjIyNC42OTU2IiB5PSIxOTQuNzYyMiI+JiMyMDAxMzsmIzMyNDg3OzwvdGV4dD48L2c+PGcgY2xhc3M9Im1lc3NhZ2UiIGRhdGEtZW50aXR5LTE9InBhcnQzIiBkYXRhLWVudGl0eS0yPSJwYXJ0NCIgZGF0YS1zb3VyY2UtbGluZT0iMTgiIGlkPSJtc2c1Ij48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI4OS42MjM1LDIyNC45NjA5LDI5OS42MjM1LDIyOC45NjA5LDI4OS42MjM1LDIzMi45NjA5LDI5My42MjM1LDIyOC45NjA5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjIwNy42OTU2IiB4Mj0iMjk1LjYyMzUiIHkxPSIyMjguOTYwOSIgeTI9IjIyOC45NjA5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjIxNC42OTU2IiB5PSIyMjMuODk1Ij4mIzI1NTExOyYjMjEwNDY7PC90ZXh0PjwvZz48P3BsYW50dW1sLXNyYyBJcW1rb0l6STIyckVCTDk4QjVPZXZVOUFvZ3pHSzdnb1N6Y3BabHJBTjBNOUhJTVBvUGE1WU5hYkNDNk55cFNfTnhTbjlhX1pvT3hVZnBrTVVHUGZBZTVxNVhqWEstbVB6QW5sd1JDZnN2eEVOMDVNYkxjNExUZEJuTnRGRWpsMUFqOEl5eFhJeXI4S1dDdzBra05ma2FMRi1yaEh0MDhIWEJpNXNJNjZzNUhZRWlHR09Lc2ZXZ3VUcTBETTJpTTliTFBGenBIMGRDRExSQUlXMnY4bWo1OXVpY2xZWW10RHB3VWl1MmVzMTJhNlFoVElVRGVfcUpFODJ5WktqR0Z3MndYZW56aGRrdlMzMU9uMEllMFVpTDl1cmhWeVFTU3MwMDAwPz48L2c+PC9zdmc+">
+<meta property="article:published_time" content="2025-07-01T18:38:39.000Z">
+<meta property="article:modified_time" content="2026-05-16T07:55:02.990Z">
+<meta property="article:author" content="a3d21">
+<meta property="article:tag" content="HA">
+<meta property="article:tag" content="智能家居">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjczcHgiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHN0eWxlPSJ3aWR0aDo2NzdweDtoZWlnaHQ6NzNweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2NzcgNzMiIHdpZHRoPSI2NzdweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PD9wbGFudHVtbCAxLjIwMjYuNGJldGEyPz48ZGVmcy8+PGc+PCEtLWVudGl0eSBhLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iYSIgZGF0YS1zb3VyY2UtbGluZT0iMSIgaWQ9ImVudDAwMDIiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iNTIuNTkzOCIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTAwLjkyMzUiIHg9IjciIHk9IjciLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS41NzY5IiB4PSIxNyIgeT0iMjkuOTk1MSI+QSYjMjQxNzk7JiMyMTQ4ODsmIzM1Nzc0OyYjMjI3OTE7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgwLjkyMzUiIHg9IjE3IiB5PSI0Ni4yOTIiPigmIzI0MTAyOyYjMzI0MTg7JiMyMjgwNjsmIzM4ODk5OyYjMzE2NjU7KTwvdGV4dD48L2c+PCEtLWVudGl0eSBpci0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImlyIiBkYXRhLXNvdXJjZS1saW5lPSIyIiBpZD0iZW50MDAwMyI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI3NS44NTYzIiB4PSIyNDcuNTMiIHk9IjE1LjE0Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuODU2MyIgeD0iMjU3LjUzIiB5PSIzOC4xMzUxIj5JUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PCEtLWVudGl0eSBoYS0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImhhIiBkYXRhLXNvdXJjZS1saW5lPSIzIiBpZD0iZW50MDAwNCI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI1Mi41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMjkuNTczMiIgeD0iMzg1LjY4IiB5PSI3Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA5LjU3MzIiIHg9IjM5NS42OCIgeT0iMjkuOTk1MSI+SG9tZSBBc3Npc3RhbnQ8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjYuOTIzNiIgeD0iMzk1LjY4IiB5PSI0Ni4yOTIiPigmIzI1NTExOyYjMjEwNDY7JiMyMDAxMzsmIzI0NTE1Oyk8L3RleHQ+PC9nPjwhLS1lbnRpdHkgYi0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImIiIGRhdGEtc291cmNlLWxpbmU9IjQiIGlkPSJlbnQwMDA1Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijg1LjYwNDIiIHg9IjU3Ny42NiIgeT0iMTUuMTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS42MDQyIiB4PSI1ODcuNjYiIHk9IjM4LjEzNTEiPkImIzI0MTc5OyYjMjE0ODg7JiMzNTc3NDsmIzIyNzkxOzwvdGV4dD48L2c+PCEtLWxpbmsgYSB0byBpci0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJlbnQwMDAyIiBkYXRhLWVudGl0eS0yPSJlbnQwMDAzIiBkYXRhLWxpbmstdHlwZT0iZGVwZW5kZW5jeSIgZGF0YS1zb3VyY2UtbGluZT0iNiIgaWQ9ImxuazYiPjxwYXRoIGQ9Ik0xMDguMzUsMzMuMjkgQzE1MC4zNCwzMy4yOSAyMDMuMDMsMzMuMjkgMjQxLjE0LDMzLjI5IiBmaWxsPSJub25lIiBpZD0iYS10by1pciIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjQ3LjE0LDMzLjI5LDIzOC4xNCwyOS4yOSwyNDIuMTQsMzMuMjksMjM4LjE0LDM3LjI5LDI0Ny4xNCwzMy4yOSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwMy44NjY4IiB4PSIxMjYuMjMiIHk9IjI2LjM1NjkiPiYjMjE0NTc7JiMzNjg2NTsmIzMzMjU4OyYjMjM0NTA7JiMyMDA0MTtJUiYjMjE2Mjk7JiMyMDE5Njs8L3RleHQ+PC9nPjwhLS1saW5rIGlyIHRvIGhhLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImVudDAwMDMiIGRhdGEtZW50aXR5LTI9ImVudDAwMDQiIGRhdGEtbGluay10eXBlPSJkZXBlbmRlbmN5IiBkYXRhLXNvdXJjZS1saW5lPSI3IiBpZD0ibG5rNyI+PHBhdGggZD0iTTMyMy43MywzMy4yOSBDMzQyLjAxLDMzLjI5IDM1OC40LDMzLjI5IDM3OS4yNSwzMy4yOSIgZmlsbD0ibm9uZSIgaWQ9ImlyLXRvLWhhIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzODUuMjUsMzMuMjksMzc2LjI1LDI5LjI5LDM4MC4yNSwzMy4yOSwzNzYuMjUsMzcuMjksMzg1LjI1LDMzLjI5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjM0MS41MyIgeT0iMjYuMzU2OSI+JiMyMDI1NjsmIzM2ODgyOzwvdGV4dD48L2c+PCEtLWxpbmsgaGEgdG8gYi0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJlbnQwMDA0IiBkYXRhLWVudGl0eS0yPSJlbnQwMDA1IiBkYXRhLWxpbmstdHlwZT0iZGVwZW5kZW5jeSIgZGF0YS1zb3VyY2UtbGluZT0iOCIgaWQ9ImxuazgiPjxwYXRoIGQ9Ik01MTUuNywzMy4yOSBDNTM2LjMsMzMuMjkgNTUyLjU0LDMzLjI5IDU3MS4yMSwzMy4yOSIgZmlsbD0ibm9uZSIgaWQ9ImhhLXRvLWIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjU3Ny4yMSwzMy4yOSw1NjguMjEsMjkuMjksNTcyLjIxLDMzLjI5LDU2OC4yMSwzNy4yOSw1NzcuMjEsMzMuMjkiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyNiIgeD0iNTMzLjQ1IiB5PSIyNi4zNTY5Ij4mIzI1NTExOyYjMjEwNDY7PC90ZXh0PjwvZz48P3BsYW50dW1sLXNyYyBBcWZEQmFkQ0l5ejlMTDFvVkJmcHl6Ri0zSV9NeE5rd2YzcWNKLUZmWmNORlRvcndrY0pRb19jUmR3X1JnQWNhYTVZaWFDWExYRDNYNlZJaVItY3BBVGtVcGJtMWJpbWlHZlJyb0N6RExOMGlCaXVpMWVnSzAwcnlyaFZ5UVNVczlwbE1GanRWMzM0ajB5S3U5c0c3V0VNSmtCV0k1TkpqVzBQUkFJV3p4UF91aWc3bkhWa2dmLWpjRlRkUHdIZHFURUJVOXhrTkE3NWI1ZTdLUDJHMnJKcFBpLTFibW9HYmhXb21qWUlXMkNISTlHMDA/PjwvZz48L3N2Zz4=">
+  
+  
+  
+  <title>[智能家居]跨平台智能家居——红外方案 - a3d21&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"a3d21.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>a3d21&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[智能家居]跨平台智能家居——红外方案"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-07-01 18:38" pubdate>
+          2025年7月1日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">[智能家居]跨平台智能家居——红外方案</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>智能家居平台有很多：小米、华为、涂鸦、aqara…，无法互通，很不方便。尤其是当买了多个平台设备时，每次操作都得想想用哪个平台APP，呼叫哪个语音助手去执行。</p>
+<p>但几乎所有平台都支持红外(IR)，而且红外是一种本地协议，可以用红外来本地化打通不同平台。</p>
+<span id="more"></span>
+
+<h2 id="1-控制流程"><a href="#1-控制流程" class="headerlink" title="1 控制流程"></a>1 控制流程</h2><img src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjczcHgiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHN0eWxlPSJ3aWR0aDo2NzdweDtoZWlnaHQ6NzNweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA2NzcgNzMiIHdpZHRoPSI2NzdweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PD9wbGFudHVtbCAxLjIwMjYuNGJldGEyPz48ZGVmcy8+PGc+PCEtLWVudGl0eSBhLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iYSIgZGF0YS1zb3VyY2UtbGluZT0iMSIgaWQ9ImVudDAwMDIiPjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iNTIuNTkzOCIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTAwLjkyMzUiIHg9IjciIHk9IjciLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS41NzY5IiB4PSIxNyIgeT0iMjkuOTk1MSI+QSYjMjQxNzk7JiMyMTQ4ODsmIzM1Nzc0OyYjMjI3OTE7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgwLjkyMzUiIHg9IjE3IiB5PSI0Ni4yOTIiPigmIzI0MTAyOyYjMzI0MTg7JiMyMjgwNjsmIzM4ODk5OyYjMzE2NjU7KTwvdGV4dD48L2c+PCEtLWVudGl0eSBpci0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImlyIiBkYXRhLXNvdXJjZS1saW5lPSIyIiBpZD0iZW50MDAwMyI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI3NS44NTYzIiB4PSIyNDcuNTMiIHk9IjE1LjE0Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuODU2MyIgeD0iMjU3LjUzIiB5PSIzOC4xMzUxIj5JUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PCEtLWVudGl0eSBoYS0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImhhIiBkYXRhLXNvdXJjZS1saW5lPSIzIiBpZD0iZW50MDAwNCI+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSI1Mi41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMjkuNTczMiIgeD0iMzg1LjY4IiB5PSI3Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA5LjU3MzIiIHg9IjM5NS42OCIgeT0iMjkuOTk1MSI+SG9tZSBBc3Npc3RhbnQ8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNjYuOTIzNiIgeD0iMzk1LjY4IiB5PSI0Ni4yOTIiPigmIzI1NTExOyYjMjEwNDY7JiMyMDAxMzsmIzI0NTE1Oyk8L3RleHQ+PC9nPjwhLS1lbnRpdHkgYi0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImIiIGRhdGEtc291cmNlLWxpbmU9IjQiIGlkPSJlbnQwMDA1Ij48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijg1LjYwNDIiIHg9IjU3Ny42NiIgeT0iMTUuMTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI2NS42MDQyIiB4PSI1ODcuNjYiIHk9IjM4LjEzNTEiPkImIzI0MTc5OyYjMjE0ODg7JiMzNTc3NDsmIzIyNzkxOzwvdGV4dD48L2c+PCEtLWxpbmsgYSB0byBpci0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJlbnQwMDAyIiBkYXRhLWVudGl0eS0yPSJlbnQwMDAzIiBkYXRhLWxpbmstdHlwZT0iZGVwZW5kZW5jeSIgZGF0YS1zb3VyY2UtbGluZT0iNiIgaWQ9ImxuazYiPjxwYXRoIGQ9Ik0xMDguMzUsMzMuMjkgQzE1MC4zNCwzMy4yOSAyMDMuMDMsMzMuMjkgMjQxLjE0LDMzLjI5IiBmaWxsPSJub25lIiBpZD0iYS10by1pciIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMjQ3LjE0LDMzLjI5LDIzOC4xNCwyOS4yOSwyNDIuMTQsMzMuMjksMjM4LjE0LDM3LjI5LDI0Ny4xNCwzMy4yOSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwMy44NjY4IiB4PSIxMjYuMjMiIHk9IjI2LjM1NjkiPiYjMjE0NTc7JiMzNjg2NTsmIzMzMjU4OyYjMjM0NTA7JiMyMDA0MTtJUiYjMjE2Mjk7JiMyMDE5Njs8L3RleHQ+PC9nPjwhLS1saW5rIGlyIHRvIGhhLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImVudDAwMDMiIGRhdGEtZW50aXR5LTI9ImVudDAwMDQiIGRhdGEtbGluay10eXBlPSJkZXBlbmRlbmN5IiBkYXRhLXNvdXJjZS1saW5lPSI3IiBpZD0ibG5rNyI+PHBhdGggZD0iTTMyMy43MywzMy4yOSBDMzQyLjAxLDMzLjI5IDM1OC40LDMzLjI5IDM3OS4yNSwzMy4yOSIgZmlsbD0ibm9uZSIgaWQ9ImlyLXRvLWhhIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIzODUuMjUsMzMuMjksMzc2LjI1LDI5LjI5LDM4MC4yNSwzMy4yOSwzNzYuMjUsMzcuMjksMzg1LjI1LDMzLjI5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjM0MS41MyIgeT0iMjYuMzU2OSI+JiMyMDI1NjsmIzM2ODgyOzwvdGV4dD48L2c+PCEtLWxpbmsgaGEgdG8gYi0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJlbnQwMDA0IiBkYXRhLWVudGl0eS0yPSJlbnQwMDA1IiBkYXRhLWxpbmstdHlwZT0iZGVwZW5kZW5jeSIgZGF0YS1zb3VyY2UtbGluZT0iOCIgaWQ9ImxuazgiPjxwYXRoIGQ9Ik01MTUuNywzMy4yOSBDNTM2LjMsMzMuMjkgNTUyLjU0LDMzLjI5IDU3MS4yMSwzMy4yOSIgZmlsbD0ibm9uZSIgaWQ9ImhhLXRvLWIiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjU3Ny4yMSwzMy4yOSw1NjguMjEsMjkuMjksNTcyLjIxLDMzLjI5LDU2OC4yMSwzNy4yOSw1NzcuMjEsMzMuMjkiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyNiIgeD0iNTMzLjQ1IiB5PSIyNi4zNTY5Ij4mIzI1NTExOyYjMjEwNDY7PC90ZXh0PjwvZz48P3BsYW50dW1sLXNyYyBBcWZEQmFkQ0l5ejlMTDFvVkJmcHl6Ri0zSV9NeE5rd2YzcWNKLUZmWmNORlRvcndrY0pRb19jUmR3X1JnQWNhYTVZaWFDWExYRDNYNlZJaVItY3BBVGtVcGJtMWJpbWlHZlJyb0N6RExOMGlCaXVpMWVnSzAwcnlyaFZ5UVNVczlwbE1GanRWMzM0ajB5S3U5c0c3V0VNSmtCV0k1TkpqVzBQUkFJV3p4UF91aWc3bkhWa2dmLWpjRlRkUHdIZHFURUJVOXhrTkE3NWI1ZTdLUDJHMnJKcFBpLTFibW9HYmhXb21qWUlXMkNISTlHMDA/PjwvZz48L3N2Zz4='>
+
+<p>第一步，就是DIY一个IR接收器，用来接收<strong>自定义IR编码</strong>（建议使用NEC码）。</p>
+<h2 id="2-使用esphome制作IR接收器"><a href="#2-使用esphome制作IR接收器" class="headerlink" title="2 使用esphome制作IR接收器"></a>2 使用esphome制作IR接收器</h2><p>使用esphome可以很容易编译固件，制作DIY设备，几乎0代码。<br>硬件可以使用 esp32/esp8266 + 红外接收头。可以买模块自己焊接，也买成品模块或者兼容设备，如ct30w。可参考 <a target="_blank" rel="noopener" href="https://www.bilibili.com/opus/967982171394408465">刷机教程</a> 进行刷机。</p>
+<p>我使用的是ct30w，以下是ct30w对应的配置文件。可以用<code>esphome compile</code>编译，也可以直接下载<a href="/assets/ir2ha.bin">预编译固件</a>。刷机后，连接AP配置wifi信息使用。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">esphome:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">ir2ha</span><br><br><span class="hljs-attr">esp8266:</span><br>  <span class="hljs-attr">board:</span> <span class="hljs-string">esp01_1m</span><br><br><span class="hljs-comment"># Enable logging</span><br><span class="hljs-attr">logger:</span><br>  <span class="hljs-comment"># level: DEBUG</span><br><br><span class="hljs-attr">web_server:</span><br>  <span class="hljs-attr">port:</span> <span class="hljs-number">80</span><br><br><span class="hljs-comment"># Enable Home Assistant API</span><br><span class="hljs-attr">api:</span><br>  <span class="hljs-attr">actions:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">action:</span> <span class="hljs-string">send_raw_ir</span><br>      <span class="hljs-attr">variables:</span><br>        <span class="hljs-attr">raw_data:</span> <span class="hljs-string">&#x27;int[]&#x27;</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">remote_transmitter.transmit_raw:</span><br>              <span class="hljs-attr">code:</span> <span class="hljs-type">!lambda</span> <span class="hljs-string">&#x27;return raw_data;&#x27;</span> <br>              <span class="hljs-attr">carrier_frequency:</span> <span class="hljs-string">38kHz</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">action:</span> <span class="hljs-string">send_nec_ir</span><br>      <span class="hljs-attr">variables:</span><br>        <span class="hljs-attr">address:</span> <span class="hljs-string">int</span><br>        <span class="hljs-attr">command:</span> <span class="hljs-string">int</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">remote_transmitter.transmit_nec:</span><br>            <span class="hljs-attr">address:</span> <span class="hljs-type">!lambda</span> <span class="hljs-string">&#x27;return address;&#x27;</span> <span class="hljs-comment">#0x1234</span><br>            <span class="hljs-attr">command:</span> <span class="hljs-type">!lambda</span> <span class="hljs-string">&#x27;return command;&#x27;</span>  <span class="hljs-comment">#0x78AB</span><br><br><span class="hljs-attr">ota:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">platform:</span> <span class="hljs-string">esphome</span><br>    <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;&quot;</span><br><br><span class="hljs-attr">wifi:</span><br>  <span class="hljs-attr">ssid:</span> <span class="hljs-string">&quot;1111&quot;</span><br>  <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;11111111&quot;</span><br><br>  <span class="hljs-comment"># Enable fallback hotspot (captive portal) in case wifi connection fails</span><br>  <span class="hljs-attr">ap:</span><br>    <span class="hljs-attr">ssid:</span> <span class="hljs-string">&quot;ir2ha Fallback Hotspot&quot;</span>  <span class="hljs-comment"># 通电后登录配置WIFI</span><br>    <span class="hljs-attr">password:</span> <span class="hljs-string">&quot;66668888&quot;</span><br><br><span class="hljs-attr">captive_portal:</span><br><br><span class="hljs-attr">output:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">platform:</span> <span class="hljs-string">gpio</span><br>    <span class="hljs-attr">id:</span> <span class="hljs-string">LEDD5</span><br>    <span class="hljs-attr">pin:</span><br>      <span class="hljs-attr">number:</span> <span class="hljs-string">GPIO15</span><br><br><span class="hljs-attr">remote_receiver:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">pin:</span> <br>      <span class="hljs-attr">number:</span> <span class="hljs-string">GPIO5</span><br>      <span class="hljs-attr">inverted:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">id:</span> <span class="hljs-string">IR_receiver</span><br>    <span class="hljs-attr">tolerance:</span> <span class="hljs-number">55</span><span class="hljs-string">%</span><br>    <span class="hljs-attr">dump:</span> [<span class="hljs-string">nec</span>]<br>    <span class="hljs-attr">on_nec:</span> <span class="hljs-comment"># 使用nec码</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">homeassistant.event:</span><br>            <span class="hljs-attr">event:</span> <span class="hljs-string">esphome.ir_received</span><br>            <span class="hljs-attr">data:</span><br>              <span class="hljs-attr">address:</span> <span class="hljs-type">!lambda</span> <span class="hljs-string">&#x27;return x.address;&#x27;</span><br>              <span class="hljs-attr">command:</span> <span class="hljs-type">!lambda</span> <span class="hljs-string">&#x27;return x.command;&#x27;</span><br>              <span class="hljs-attr">protocol:</span> <span class="hljs-string">&quot;nec&quot;</span><br>              <span class="hljs-attr">device:</span> <span class="hljs-string">&quot;ir2ha&quot;</span><br><br><span class="hljs-attr">remote_transmitter:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">pin:</span> <span class="hljs-string">GPIO14</span><br>    <span class="hljs-attr">carrier_duty_percent:</span> <span class="hljs-number">50</span><span class="hljs-string">%</span><br>    <span class="hljs-attr">id:</span> <span class="hljs-string">IR_transmitter</span><br>    <span class="hljs-attr">on_transmit:</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">output.turn_on:</span> <span class="hljs-string">LEDD5</span><br>    <span class="hljs-attr">on_complete:</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">output.turn_off:</span> <span class="hljs-string">LEDD5</span><br><br><br><span class="hljs-attr">button:</span>         <br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">platform:</span> <span class="hljs-string">template</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;media_fan_power&quot;</span> <span class="hljs-comment"># 测试用</span><br>    <span class="hljs-attr">on_press:</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">remote_transmitter.transmit_raw:</span><br>            <span class="hljs-attr">code:</span> [<span class="hljs-number">9018</span>, <span class="hljs-number">-4395</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-482</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-1593</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1599</span>, <span class="hljs-number">631</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>,<br>                 <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1596</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-479</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>,<br>                 <span class="hljs-number">-481</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>]<br>            <span class="hljs-attr">carrier_frequency:</span> <span class="hljs-string">38kHz</span><br><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">platform:</span> <span class="hljs-string">template</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;media_fan_speed&quot;</span><br>    <span class="hljs-attr">on_press:</span><br>      <span class="hljs-attr">then:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">remote_transmitter.transmit_raw:</span><br>            <span class="hljs-attr">code:</span> [<span class="hljs-number">9017</span>, <span class="hljs-number">-4392</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>,<br>                  <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-481</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">635</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">635</span>,<br>                  <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-480</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1594</span>, <span class="hljs-number">633</span>, <span class="hljs-number">-1596</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>, <span class="hljs-number">-1595</span>, <span class="hljs-number">634</span>]<br>            <span class="hljs-attr">carrier_frequency:</span> <span class="hljs-string">38kHz</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-测试IR转发HA事件"><a href="#3-测试IR转发HA事件" class="headerlink" title="3 测试IR转发HA事件"></a>3 测试IR转发HA事件</h2><p>断电重启IR接收器，Home Assistant设备页面会自动发现设备，将其添加进来。<br>到“开发者工具”-&gt;“动作”标签页，可以测试发自定义NEC码。NEC码由address和command两个uint16(0-65535)组成（省略repeats）。</p>
+<p><img src="/img/send-nec-ir-action.png" srcset="/img/loading.gif" lazyload></p>
+<p>从路由器查看IR接收器地址，浏览器访问，可查看红外接收日志。</p>
+<p>Home Assistant至“开发者工具”-&gt;“事件”标签页，测试红外转发是否成功。</p>
+<p><img src="/img/ha-listen-event.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="4-自定义IR码并配置自动化"><a href="#4-自定义IR码并配置自动化" class="headerlink" title="4 自定义IR码并配置自动化"></a>4 自定义IR码并配置自动化</h2><p>按需自定义NEC码功能，最好用文档记录</p>
+<figure class="highlight node-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs node-repl">addr: 6666<br>10001  开台灯<br>10002  关台灯<br>10003  开除湿机<br>10004  关除湿机<br><span class="hljs-meta">...</span><br></code></pre></td></tr></table></figure>
+<p>在红外音箱上，创建相应红外设备，用<strong>发自定义NEC码</strong>动作对设备学习。<br><img src="/img/add-ir-device.jpg" srcset="/img/loading.gif" lazyload></p>
+<p>Home Assistant上定义<strong>自动化</strong>，响应红外事件操作。<br><img src="/img/ha-listen-ir-event.png" srcset="/img/loading.gif" lazyload></p>
+<p>如果使用node-red，配置起来更直观。</p>
+<p><img src="/img/node-red-listen-ir-event.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这种打通方式，原理是为Home Assistant制作一个红外遥控接收器，把音箱当遥控器使用。<br>实际上，IR接收器也能发IR，当房子有多个IR接收器时，可以进行IR中继。</p>
+<img src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IlNFUVVFTkNFIiBoZWlnaHQ9IjMzM3B4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6NTM1cHg7aGVpZ2h0OjMzM3B4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUzNSAzMzMiIHdpZHRoPSI1MzVweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PD9wbGFudHVtbCAxLjIwMjYuNGJldGEyPz48ZGVmcy8+PGc+PHJlY3QgZmlsbD0iI0RERERERCIgaGVpZ2h0PSIzMjAuMjU3OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMjY1Ljg1NTciIHg9Ijc0Ljc2NzciIHk9IjYiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyNiIgeD0iMTk0LjY5NTYiIHk9IjE4LjA2NjkiPiYjMjAwNzA7JiMyNTE1MTs8L3RleHQ+PHJlY3QgZmlsbD0iI0RERERERCIgaGVpZ2h0PSIzMjAuMjU3OCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTg1Ljg1NTkiIHg9IjM0Mi42MjM0IiB5PSI2Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjQyMi41NTEzIiB5PSIxOC4wNjY5Ij4mIzIzNDU4OyYjMjEzODE7PC90ZXh0PjxnIGNsYXNzPSJwYXJ0aWNpcGFudC1saWZlbGluZSIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0idSIgZGF0YS1zb3VyY2UtbGluZT0iMSIgaWQ9InBhcnQxLWxpZmVsaW5lIj48Zz48dGl0bGU+VXNlcjwvdGl0bGU+PHJlY3QgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjAwMDAwIiBoZWlnaHQ9IjE2NS42NjQxIiB3aWR0aD0iOCIgeD0iMTkuOTU1MSIgeT0iODEuMjk2OSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1kYXNoYXJyYXk6NSw1OyIgeDE9IjIzIiB4Mj0iMjMiIHkxPSI4MS4yOTY5IiB5Mj0iMjQ2Ljk2MDkiLz48L2c+PC9nPjxnIGNsYXNzPSJwYXJ0aWNpcGFudC1saWZlbGluZSIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MiIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iczIiIGRhdGEtc291cmNlLWxpbmU9IjQiIGlkPSJwYXJ0Mi1saWZlbGluZSI+PGc+PHRpdGxlPi4uLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjEwOS43Njc2IiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMTEyLjc2NzciIHgyPSIxMTIuNzY3NyIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQzIiBkYXRhLXF1YWxpZmllZC1uYW1lPSJpcjIiIGRhdGEtc291cmNlLWxpbmU9IjUiIGlkPSJwYXJ0My1saWZlbGluZSI+PGc+PHRpdGxlPi4uSVIuLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjIwMy42OTU2IiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMjA2Ljc2NzUiIHgyPSIyMDYuNzY3NSIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQ0IiBkYXRhLXF1YWxpZmllZC1uYW1lPSJmYW4iIGRhdGEtc291cmNlLWxpbmU9IjYiIGlkPSJwYXJ0NC1saWZlbGluZSI+PGc+PHRpdGxlPi4uLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjI5Ny42MjM1IiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMzAwLjYyMzYiIHgyPSIzMDAuNjIzNiIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQ1IiBkYXRhLXF1YWxpZmllZC1uYW1lPSJzMSIgZGF0YS1zb3VyY2UtbGluZT0iMTAiIGlkPSJwYXJ0NS1saWZlbGluZSI+PGc+PHRpdGxlPi4uLi48L3RpdGxlPjxyZWN0IGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMDAwMCIgaGVpZ2h0PSIxNjUuNjY0MSIgd2lkdGg9IjgiIHg9IjM3Ny42MjMzIiB5PSI4MS4yOTY5Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7c3Ryb2tlLWRhc2hhcnJheTo1LDU7IiB4MT0iMzgwLjYyMzQiIHgyPSIzODAuNjIzNCIgeTE9IjgxLjI5NjkiIHkyPSIyNDYuOTYwOSIvPjwvZz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50LWxpZmVsaW5lIiBkYXRhLWVudGl0eS11aWQ9InBhcnQ2IiBkYXRhLXF1YWxpZmllZC1uYW1lPSJpcjEiIGRhdGEtc291cmNlLWxpbmU9IjExIiBpZD0icGFydDYtbGlmZWxpbmUiPjxnPjx0aXRsZT4uLklSLi4uPC90aXRsZT48cmVjdCBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjAuMDAwMDAiIGhlaWdodD0iMTY1LjY2NDEiIHdpZHRoPSI4IiB4PSI0NzEuNTUxMiIgeT0iODEuMjk2OSIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41O3N0cm9rZS1kYXNoYXJyYXk6NSw1OyIgeDE9IjQ3NC42MjMyIiB4Mj0iNDc0LjYyMzIiIHkxPSI4MS4yOTY5IiB5Mj0iMjQ2Ljk2MDkiLz48L2c+PC9nPjxnIGNsYXNzPSJwYXJ0aWNpcGFudCBwYXJ0aWNpcGFudC1oZWFkIiBkYXRhLWVudGl0eS11aWQ9InBhcnQxIiBkYXRhLXF1YWxpZmllZC1uYW1lPSJ1IiBkYXRhLXNvdXJjZS1saW5lPSIxIiBpZD0icGFydDEtaGVhZCI+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMzEuOTEwMiIgeD0iNSIgeT0iNzcuOTk1MSI+VXNlcjwvdGV4dD48ZWxsaXBzZSBjeD0iMjMuOTU1MSIgY3k9IjEzLjUiIGZpbGw9IiNFMkUyRjAiIHJ4PSI4IiByeT0iOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7Ii8+PHBhdGggZD0iTTIzLjk1NTEsMjEuNSBMMjMuOTU1MSw0OC41IE0xMC45NTUxLDI5LjUgTDM2Ljk1NTEsMjkuNSBNMjMuOTU1MSw0OC41IEwxMC45NTUxLDYzLjUgTTIzLjk1NTEsNDguNSBMMzYuOTU1MSw2My41IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LXRhaWwiIGRhdGEtZW50aXR5LXVpZD0icGFydDEiIGRhdGEtcXVhbGlmaWVkLW5hbWU9InUiIGRhdGEtc291cmNlLWxpbmU9IjEiIGlkPSJwYXJ0MS10YWlsIj48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzMS45MTAyIiB4PSI1IiB5PSIyNTguOTU2MSI+VXNlcjwvdGV4dD48ZWxsaXBzZSBjeD0iMjMuOTU1MSIgY3k9IjI3MC43NTc4IiBmaWxsPSIjRTJFMkYwIiByeD0iOCIgcnk9IjgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIvPjxwYXRoIGQ9Ik0yMy45NTUxLDI3OC43NTc4IEwyMy45NTUxLDMwNS43NTc4IE0xMC45NTUxLDI4Ni43NTc4IEwzNi45NTUxLDI4Ni43NTc4IE0yMy45NTUxLDMwNS43NTc4IEwxMC45NTUxLDMyMC43NTc4IE0yMy45NTUxLDMwNS43NTc4IEwzNi45NTUxLDMyMC43NTc4IiBmaWxsPSJub25lIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiLz48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LWhlYWQiIGRhdGEtZW50aXR5LXVpZD0icGFydDIiIGRhdGEtcXVhbGlmaWVkLW5hbWU9InMyIiBkYXRhLXNvdXJjZS1saW5lPSI0IiBpZD0icGFydDItaGVhZCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSI0Ni41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSI3OC43Njc3IiB5PSIzMy43MDMxIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuOTk5OCIgeD0iODUuNzY3NyIgeT0iNTMuNjk4MiI+JiMyMDA3MDsmIzI1MTUxOyYjMzg4OTk7JiMzMTY2NTs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuNzgwMiIgeD0iODcuMzc3NSIgeT0iNjkuOTk1MSI+KCYjMTk5ODE7JiMyNDEwMjtJUik8L3RleHQ+PC9nPjxnIGNsYXNzPSJwYXJ0aWNpcGFudCBwYXJ0aWNpcGFudC10YWlsIiBkYXRhLWVudGl0eS11aWQ9InBhcnQyIiBkYXRhLXF1YWxpZmllZC1uYW1lPSJzMiIgZGF0YS1zb3VyY2UtbGluZT0iNCIgaWQ9InBhcnQyLXRhaWwiPjxyZWN0IGZpbGw9IiNFMkUyRjAiIGhlaWdodD0iNDYuNTkzOCIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNjkuOTk5OCIgeD0iNzguNzY3NyIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NS45OTk4IiB4PSI4NS43Njc3IiB5PSIyNjUuOTU2MSI+JiMyMDA3MDsmIzI1MTUxOyYjMzg4OTk7JiMzMTY2NTs8L3RleHQ+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuNzgwMiIgeD0iODcuMzc3NSIgeT0iMjgyLjI1MjkiPigmIzE5OTgxOyYjMjQxMDI7SVIpPC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtaGVhZCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MyIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iaXIyIiBkYXRhLXNvdXJjZS1saW5lPSI1IiBpZD0icGFydDMtaGVhZCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSIzMC4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Ny44NTYxIiB4PSIxNTguNzY3NSIgeT0iNTAiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My44NTYxIiB4PSIxNjUuNzY3NSIgeT0iNjkuOTk1MSI+JiMyMDA3MDsmIzI1MTUxO0lSJiMyNTUwOTsmIzI1OTEwOyYjMjIxMjA7PC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtdGFpbCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0MyIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iaXIyIiBkYXRhLXNvdXJjZS1saW5lPSI1IiBpZD0icGFydDMtdGFpbCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSIzMC4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI5Ny44NTYxIiB4PSIxNTguNzY3NSIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI4My44NTYxIiB4PSIxNjUuNzY3NSIgeT0iMjY1Ljk1NjEiPiYjMjAwNzA7JiMyNTE1MTtJUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LWhlYWQiIGRhdGEtZW50aXR5LXVpZD0icGFydDQiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImZhbiIgZGF0YS1zb3VyY2UtbGluZT0iNiIgaWQ9InBhcnQ0LWhlYWQiPjxyZWN0IGZpbGw9IiNFMkUyRjAiIGhlaWdodD0iMzAuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iNjkuOTk5OCIgeD0iMjY2LjYyMzYiIHk9IjUwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTUuOTk5OCIgeD0iMjczLjYyMzYiIHk9IjY5Ljk5NTEiPiYjMjAwNzA7JiMyNTE1MTsmIzM5MTE4OyYjMjUxNTk7PC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtdGFpbCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NCIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iZmFuIiBkYXRhLXNvdXJjZS1saW5lPSI2IiBpZD0icGFydDQtdGFpbCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSIzMC4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSIyNjYuNjIzNiIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NS45OTk4IiB4PSIyNzMuNjIzNiIgeT0iMjY1Ljk1NjEiPiYjMjAwNzA7JiMyNTE1MTsmIzM5MTE4OyYjMjUxNTk7PC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtaGVhZCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iczEiIGRhdGEtc291cmNlLWxpbmU9IjEwIiBpZD0icGFydDUtaGVhZCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSI0Ni41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSIzNDYuNjIzNCIgeT0iMzMuNzAzMSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjU1Ljk5OTgiIHg9IjM1My42MjM0IiB5PSI1My42OTgyIj4mIzIzNDU4OyYjMjEzODE7JiMzODg5OTsmIzMxNjY1OzwvdGV4dD48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzOC43ODAyIiB4PSIzNjIuMjMzMiIgeT0iNjkuOTk1MSI+KCYjMjQxMDI7SVIpPC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtdGFpbCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NSIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iczEiIGRhdGEtc291cmNlLWxpbmU9IjEwIiBpZD0icGFydDUtdGFpbCI+PHJlY3QgZmlsbD0iI0UyRTJGMCIgaGVpZ2h0PSI0Ni41OTM4IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSI2OS45OTk4IiB4PSIzNDYuNjIzNCIgeT0iMjQ1Ljk2MDkiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1NS45OTk4IiB4PSIzNTMuNjIzNCIgeT0iMjY1Ljk1NjEiPiYjMjM0NTg7JiMyMTM4MTsmIzM4ODk5OyYjMzE2NjU7PC90ZXh0Pjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjM4Ljc4MDIiIHg9IjM2Mi4yMzMyIiB5PSIyODIuMjUyOSI+KCYjMjQxMDI7SVIpPC90ZXh0PjwvZz48ZyBjbGFzcz0icGFydGljaXBhbnQgcGFydGljaXBhbnQtaGVhZCIgZGF0YS1lbnRpdHktdWlkPSJwYXJ0NiIgZGF0YS1xdWFsaWZpZWQtbmFtZT0iaXIxIiBkYXRhLXNvdXJjZS1saW5lPSIxMSIgaWQ9InBhcnQ2LWhlYWQiPjxyZWN0IGZpbGw9IiNFMkUyRjAiIGhlaWdodD0iMzAuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iOTcuODU2MSIgeD0iNDI2LjYyMzIiIHk9IjUwIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iODMuODU2MSIgeD0iNDMzLjYyMzIiIHk9IjY5Ljk5NTEiPiYjMjM0NTg7JiMyMTM4MTtJUiYjMjU1MDk7JiMyNTkxMDsmIzIyMTIwOzwvdGV4dD48L2c+PGcgY2xhc3M9InBhcnRpY2lwYW50IHBhcnRpY2lwYW50LXRhaWwiIGRhdGEtZW50aXR5LXVpZD0icGFydDYiIGRhdGEtcXVhbGlmaWVkLW5hbWU9ImlyMSIgZGF0YS1zb3VyY2UtbGluZT0iMTEiIGlkPSJwYXJ0Ni10YWlsIj48cmVjdCBmaWxsPSIjRTJFMkYwIiBoZWlnaHQ9IjMwLjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9Ijk3Ljg1NjEiIHg9IjQyNi42MjMyIiB5PSIyNDUuOTYwOSIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjgzLjg1NjEiIHg9IjQzMy42MjMyIiB5PSIyNjUuOTU2MSI+JiMyMzQ1ODsmIzIxMzgxO0lSJiMyNTUwOTsmIzI1OTEwOyYjMjIxMjA7PC90ZXh0PjwvZz48ZyBjbGFzcz0ibWVzc2FnZSIgZGF0YS1lbnRpdHktMT0icGFydDEiIGRhdGEtZW50aXR5LTI9InBhcnQyIiBkYXRhLXNvdXJjZS1saW5lPSIxNCIgaWQ9Im1zZzEiPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTAxLjc2NzYsMTA4LjQyOTcsMTExLjc2NzYsMTEyLjQyOTcsMTAxLjc2NzYsMTE2LjQyOTcsMTA1Ljc2NzYsMTEyLjQyOTciIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7IiB4MT0iMjMuOTU1MSIgeDI9IjEwNy43Njc2IiB5MT0iMTEyLjQyOTciIHkyPSIxMTIuNDI5NyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjY1LjgxMjUiIHg9IjMwLjk1NTEiIHk9IjEwNy4zNjM4Ij5zYXk6JiMyNDMyMDsmIzM5MTE4OyYjMjUxNTk7PC90ZXh0PjwvZz48ZyBjbGFzcz0ibWVzc2FnZSIgZGF0YS1lbnRpdHktMT0icGFydDIiIGRhdGEtZW50aXR5LTI9InBhcnQ1IiBkYXRhLXNvdXJjZS1saW5lPSIxNSIgaWQ9Im1zZzIiPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMzY5LjYyMzMsMTM3LjU2MjUsMzc5LjYyMzMsMTQxLjU2MjUsMzY5LjYyMzMsMTQ1LjU2MjUsMzczLjYyMzMsMTQxLjU2MjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7c3Ryb2tlLWRhc2hhcnJheToyLDI7IiB4MT0iMTEzLjc2NzYiIHgyPSIzNzUuNjIzMyIgeTE9IjE0MS41NjI1IiB5Mj0iMTQxLjU2MjUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzOSIgeD0iMTIwLjc2NzYiIHk9IjEzNi40OTY2Ij4mIzIwMTEzOyYjMzU4NDM7JiMyOTk5Mjs8L3RleHQ+PC9nPjxnIGNsYXNzPSJtZXNzYWdlIiBkYXRhLWVudGl0eS0xPSJwYXJ0NSIgZGF0YS1lbnRpdHktMj0icGFydDYiIGRhdGEtc291cmNlLWxpbmU9IjE2IiBpZD0ibXNnMyI+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSI0NjMuNTUxMiwxNjYuNjk1Myw0NzMuNTUxMiwxNzAuNjk1Myw0NjMuNTUxMiwxNzQuNjk1Myw0NjcuNTUxMiwxNzAuNjk1MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MTsiIHgxPSIzODEuNjIzMyIgeDI9IjQ2OS41NTEyIiB5MT0iMTcwLjY5NTMiIHkyPSIxNzAuNjk1MyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI1Ljg2NjciIHg9IjM4OC42MjMzIiB5PSIxNjUuNjI5NCI+JiMyMTQ1NztJUjwvdGV4dD48L2c+PGcgY2xhc3M9Im1lc3NhZ2UiIGRhdGEtZW50aXR5LTE9InBhcnQ2IiBkYXRhLWVudGl0eS0yPSJwYXJ0MyIgZGF0YS1zb3VyY2UtbGluZT0iMTciIGlkPSJtc2c0Ij48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjIxOC42OTU2LDE5NS44MjgxLDIwOC42OTU2LDE5OS44MjgxLDIxOC42OTU2LDIwMy44MjgxLDIxNC42OTU2LDE5OS44MjgxIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjIxMi42OTU2IiB4Mj0iNDc0LjU1MTIiIHkxPSIxOTkuODI4MSIgeTI9IjE5OS44MjgxIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjIyNC42OTU2IiB5PSIxOTQuNzYyMiI+JiMyMDAxMzsmIzMyNDg3OzwvdGV4dD48L2c+PGcgY2xhc3M9Im1lc3NhZ2UiIGRhdGEtZW50aXR5LTE9InBhcnQzIiBkYXRhLWVudGl0eS0yPSJwYXJ0NCIgZGF0YS1zb3VyY2UtbGluZT0iMTgiIGlkPSJtc2c1Ij48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjI4OS42MjM1LDIyNC45NjA5LDI5OS42MjM1LDIyOC45NjA5LDI4OS42MjM1LDIzMi45NjA5LDI5My42MjM1LDIyOC45NjA5IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjE7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxOyIgeDE9IjIwNy42OTU2IiB4Mj0iMjk1LjYyMzUiIHkxPSIyMjguOTYwOSIgeTI9IjIyOC45NjA5Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjYiIHg9IjIxNC42OTU2IiB5PSIyMjMuODk1Ij4mIzI1NTExOyYjMjEwNDY7PC90ZXh0PjwvZz48P3BsYW50dW1sLXNyYyBJcW1rb0l6STIyckVCTDk4QjVPZXZVOUFvZ3pHSzdnb1N6Y3BabHJBTjBNOUhJTVBvUGE1WU5hYkNDNk55cFNfTnhTbjlhX1pvT3hVZnBrTVVHUGZBZTVxNVhqWEstbVB6QW5sd1JDZnN2eEVOMDVNYkxjNExUZEJuTnRGRWpsMUFqOEl5eFhJeXI4S1dDdzBra05ma2FMRi1yaEh0MDhIWEJpNXNJNjZzNUhZRWlHR09Lc2ZXZ3VUcTBETTJpTTliTFBGenBIMGRDRExSQUlXMnY4bWo1OXVpY2xZWW10RHB3VWl1MmVzMTJhNlFoVElVRGVfcUpFODJ5WktqR0Z3MndYZW56aGRrdlMzMU9uMEllMFVpTDl1cmhWeVFTU3MwMDAwPz48L2c+PC9zdmc+'>
+<p>更多有趣玩法期待你来解锁 :)</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/HA/">#HA</a>
+      
+        <a href="/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/">#智能家居</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[智能家居]跨平台智能家居——红外方案</div>
+      <div>https://a3d21.github.io/2025/07/01/2025-07-01-use-ir-to-communicate-across-smart-home-platforms/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>a3d21</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年7月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/05/02/2026-05-02-a-lite-go-web-framework/" title="一个轻量的Go Web框架">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">一个轻量的Go Web框架</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/02/14/2025-02-14-xiaoai-voice-control-for-ha-devices/" title="[智能家居]小爱语音控制HA设备">
+                        <span class="hidden-mobile">[智能家居]小爱语音控制HA设备</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
