@@ -1,0 +1,809 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="a3d21">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="AI 编程越用到后面，越会发现真正的瓶颈通常不是“模型够不够强”，而是两个更基础的问题：  你能不能把问题描述清楚。 你能不能把结果验收清楚。  如果这两个问题没解决，模型越强，往往只是越快地产生更多看起来正确、实际上不可用的代码。反过来，只要描述足够清晰、验收足够具体，即使不是最强模型，也能稳定产出可用结果。 1. 如何清楚地描述问题很多人说自己“不会写 prompt”，本质上往往不是不会写提示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI编程思考2 - 描述与验收">
+<meta property="og:url" content="https://a3d21.github.io/2026/05/23/2026-05-23-AI-Coding-Reflections-2/index.html">
+<meta property="og:site_name" content="a3d21&#39;s blog">
+<meta property="og:description" content="AI 编程越用到后面，越会发现真正的瓶颈通常不是“模型够不够强”，而是两个更基础的问题：  你能不能把问题描述清楚。 你能不能把结果验收清楚。  如果这两个问题没解决，模型越强，往往只是越快地产生更多看起来正确、实际上不可用的代码。反过来，只要描述足够清晰、验收足够具体，即使不是最强模型，也能稳定产出可用结果。 1. 如何清楚地描述问题很多人说自己“不会写 prompt”，本质上往往不是不会写提示">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-23T05:42:07.000Z">
+<meta property="article:modified_time" content="2026-09-24T16:34:47.308Z">
+<meta property="article:author" content="a3d21">
+<meta property="article:tag" content="编程">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AI编程思考2 - 描述与验收 - a3d21&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"a3d21.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>a3d21&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="描述与验收，AI 编程的两个基本功"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-05-23 13:42" pubdate>
+          2026年5月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">描述与验收，AI 编程的两个基本功</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>AI 编程越用到后面，越会发现真正的瓶颈通常不是“模型够不够强”，而是两个更基础的问题：</p>
+<ol>
+<li>你能不能把问题描述清楚。</li>
+<li>你能不能把结果验收清楚。</li>
+</ol>
+<p>如果这两个问题没解决，模型越强，往往只是越快地产生更多看起来正确、实际上不可用的代码。反过来，只要描述足够清晰、验收足够具体，即使不是最强模型，也能稳定产出可用结果。</p>
+<h2 id="1-如何清楚地描述问题"><a href="#1-如何清楚地描述问题" class="headerlink" title="1. 如何清楚地描述问题"></a>1. 如何清楚地描述问题</h2><p>很多人说自己“不会写 prompt”，本质上往往不是不会写提示词，而是<strong>没有把任务定义清楚</strong>。对 AI 来说，模糊的问题只会得到模糊的实现。</p>
+<h3 id="1-1-先说目标，不要先说方案"><a href="#1-1-先说目标，不要先说方案" class="headerlink" title="1.1 先说目标，不要先说方案"></a>1.1 先说目标，不要先说方案</h3><p>一个常见误区是，一上来就告诉 AI “你帮我这样改、那样改”。但如果方案本身就不成熟，AI 只会忠实地执行错误方案。</p>
+<p>更好的方式是先描述：</p>
+<ul>
+<li>背景是什么。</li>
+<li>目标是什么。</li>
+<li>现在遇到的具体问题是什么。</li>
+<li>哪些东西不能改。</li>
+</ul>
+<p>比如不要说：</p>
+<p>“帮我把这个接口改成异步的。”</p>
+<p>而可以说：</p>
+<p>“这个接口现在平均耗时 4 秒，主要卡在第三方调用。目标是把用户请求响应时间降到 500ms 内，但不能影响最终一致性，也不能修改现有 API 返回结构。”</p>
+<p>前者是在给实现指令，后者是在定义问题。对于复杂任务，<strong>定义问题比指定实现更重要</strong>。</p>
+<h3 id="1-2-给足上下文，但只给相关上下文"><a href="#1-2-给足上下文，但只给相关上下文" class="headerlink" title="1.2 给足上下文，但只给相关上下文"></a>1.2 给足上下文，但只给相关上下文</h3><p>AI 不是天然懂你的项目，它需要上下文才能做对事。但上下文也不是越多越好，太多无关信息反而会污染判断。</p>
+<p>我一般会把上下文拆成四类：</p>
+<ul>
+<li>业务上下文：这段代码在整个系统里负责什么。</li>
+<li>技术上下文：使用什么语言、框架、目录约定。</li>
+<li>局部上下文：相关文件、函数、接口、报错信息。</li>
+<li>约束上下文：哪些地方不能动，兼容性要求是什么。</li>
+</ul>
+<p>经验是：<strong>给 AI 看“完成任务所必需的最小上下文”</strong>。如果任务只是修一个 handler，就不要把整个仓库历史、无关日志、几十个文件一股脑塞进去。</p>
+<h3 id="1-3-把“做好”翻译成可执行标准"><a href="#1-3-把“做好”翻译成可执行标准" class="headerlink" title="1.3 把“做好”翻译成可执行标准"></a>1.3 把“做好”翻译成可执行标准</h3><p>“帮我优化一下”“帮我重构得更优雅”“帮我提高代码质量”这类话，人都很难理解一致，AI 更不可能理解一致。</p>
+<p>要把抽象目标翻译成具体标准，例如：</p>
+<ul>
+<li>重构后 API 行为不变。</li>
+<li>保持数据库 schema 不变。</li>
+<li>新增单元测试覆盖正常路径和异常路径。</li>
+<li><code>go test ./...</code> 必须通过。</li>
+<li>时间复杂度从 O(n²) 降到 O(n)。</li>
+</ul>
+<p>一句话：<strong>少用形容词，多用可验证条件</strong>。</p>
+<h3 id="1-4-给示例，往往比解释十句话更有效"><a href="#1-4-给示例，往往比解释十句话更有效" class="headerlink" title="1.4 给示例，往往比解释十句话更有效"></a>1.4 给示例，往往比解释十句话更有效</h3><p>示例是非常高效的沟通方式。你给一个输入输出示例，AI 往往立刻就知道你要什么。</p>
+<p>适合给示例的场景包括：</p>
+<ul>
+<li>返回 JSON 的结构。</li>
+<li>SQL 或 DSL 的写法。</li>
+<li>新代码需要遵循的风格。</li>
+<li>单测应该覆盖的用例。</li>
+</ul>
+<p>尤其在“按现有风格扩展”这个场景里，<strong>一个参考实现胜过大量抽象描述</strong>。</p>
+<h3 id="1-5-先让-AI-复述，再开始写代码"><a href="#1-5-先让-AI-复述，再开始写代码" class="headerlink" title="1.5 先让 AI 复述，再开始写代码"></a>1.5 先让 AI 复述，再开始写代码</h3><p>对于稍复杂的任务，我很少第一句就让 AI 直接写。我更常用的流程是：</p>
+<ol>
+<li>先描述目标与约束。</li>
+<li>让 AI 复述它的理解。</li>
+<li>让 AI 给出实现计划。</li>
+<li>我确认方向后，再让它开始改。</li>
+</ol>
+<p>这样做的价值很大：如果 AI 理解偏了，最好在写代码前就发现，而不是等它改了十几个文件之后再返工。</p>
+<h2 id="2-如何验收-AI-代码"><a href="#2-如何验收-AI-代码" class="headerlink" title="2. 如何验收 AI 代码"></a>2. 如何验收 AI 代码</h2><p>AI 编程最大的风险，不是它不会写代码，而是它会写出“看起来像对的代码”。因此，验收能力比生成能力更重要。</p>
+<h3 id="2-1-不要用“看起来不错”验收代码"><a href="#2-1-不要用“看起来不错”验收代码" class="headerlink" title="2.1 不要用“看起来不错”验收代码"></a>2.1 不要用“看起来不错”验收代码</h3><p>AI 写出来的代码通常可读性不差，结构甚至比很多人手写的还整齐。但“整齐”不等于“正确”。</p>
+<p>验收时至少要看三层：</p>
+<ul>
+<li>功能是否满足最初目标。</li>
+<li>约束是否被遵守。</li>
+<li>改动范围是否失控。</li>
+</ul>
+<p>也就是说，不能只看代码本身，还要对照最初定义的 Done 条件来检查。</p>
+<h3 id="2-2-把验收尽量工程化"><a href="#2-2-把验收尽量工程化" class="headerlink" title="2.2 把验收尽量工程化"></a>2.2 把验收尽量工程化</h3><p>最稳定的验收方式，不是人工盯着聊天记录，而是把验收标准外化成工程信号：</p>
+<ul>
+<li>单元测试。</li>
+<li>集成测试。</li>
+<li>lint。</li>
+<li>type check。</li>
+<li>e2e / smoke test。</li>
+<li>benchmark。</li>
+</ul>
+<p>只要这些检查可以自动执行，AI 就有机会形成“修改 → 运行验证 → 继续修正”的闭环。没有这些信号，AI 只能靠猜。</p>
+<p>所以一个很现实的结论是：<strong>不是 AI 需要测试，而是用了 AI 之后，你更需要测试</strong>。</p>
+<h3 id="2-3-用-spec-约束“做什么”，用-CI-验证“做成没有”"><a href="#2-3-用-spec-约束“做什么”，用-CI-验证“做成没有”" class="headerlink" title="2.3 用 spec 约束“做什么”，用 CI 验证“做成没有”"></a>2.3 用 spec 约束“做什么”，用 CI 验证“做成没有”</h3><p>我越来越倾向于把 AI 编程拆成两个层次：</p>
+<ul>
+<li>用 spec 定义需求、边界、验收标准。</li>
+<li>用 CI / test 验证实现是否满足 spec。</li>
+</ul>
+<p>spec 解决的是“我们到底要什么”，CI 解决的是“这次提交是否达标”。</p>
+<p>两者缺一不可。只有 spec 没有自动验证，容易停留在文档层；只有 CI 没有清晰 spec，测试通过也可能只是测了错误目标。</p>
+<h3 id="2-4-把-AI-当同事审，而不是当工具信"><a href="#2-4-把-AI-当同事审，而不是当工具信" class="headerlink" title="2.4 把 AI 当同事审，而不是当工具信"></a>2.4 把 AI 当同事审，而不是当工具信</h3><p>一个很有用的心态是：把 AI 的产出当成同事提的 PR。</p>
+<p>这意味着你要重点检查：</p>
+<ul>
+<li>有没有误解业务。</li>
+<li>有没有偷偷引入额外抽象。</li>
+<li>有没有改到不该改的文件。</li>
+<li>有没有把异常路径、边界条件漏掉。</li>
+<li>有没有为了“通过测试”写出投机实现。</li>
+</ul>
+<p>AI 的代码可以很快，但 review 不能省。</p>
+<h3 id="2-5-最终验收要落到真实场景"><a href="#2-5-最终验收要落到真实场景" class="headerlink" title="2.5 最终验收要落到真实场景"></a>2.5 最终验收要落到真实场景</h3><p>测试和 CI 很重要，但最后仍然要回到真实使用场景。尤其是以下类型的问题，光靠静态检查很难发现：</p>
+<ul>
+<li>页面交互是否顺手。</li>
+<li>接口联调时序是否正确。</li>
+<li>日志、监控、报错信息是否足够可运维。</li>
+<li>性能在真实数据量下是否达标。</li>
+</ul>
+<p>所以我会把验收分成两层：</p>
+<ul>
+<li>第一层是自动化验收，让机器快速兜底。</li>
+<li>第二层是场景化验收，让人确认结果真的可用。</li>
+</ul>
+<h2 id="3-一套实用工作流"><a href="#3-一套实用工作流" class="headerlink" title="3. 一套实用工作流"></a>3. 一套实用工作流</h2><p>如果让我把 AI 编程总结成一句操作建议，那就是：</p>
+<p><strong>先把问题写清楚，再把验收写清楚，最后才让 AI 动手。</strong></p>
+<p>一个简单但很好用的模板是：</p>
+<ol>
+<li>背景：现在是什么情况。</li>
+<li>目标：要解决什么问题。</li>
+<li>约束：哪些行为、接口、文件不能变。</li>
+<li>验收：什么条件下算完成。</li>
+<li>示例：给 1 到 2 个输入输出或参考实现。</li>
+<li>执行：让 AI 先出 plan，再改代码。</li>
+<li>验证：跑 test、lint、CI，再做人工 review。</li>
+</ol>
+<p>这个流程听起来朴素，但它本质上是在把 AI 编程从“碰运气”变成“工程化协作”。</p>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4. 小结"></a>4. 小结</h2><p>AI 编程真正稀缺的，不是“生成代码”的能力，而是两种更高阶的能力：</p>
+<ul>
+<li>把问题描述清楚的能力。</li>
+<li>把结果验收清楚的能力。</li>
+</ul>
+<p>前者决定 AI 会不会朝着正确方向努力，后者决定你能不能把 AI 产出安全地合进工程。</p>
+<p>所以与其持续研究“怎么写神奇 prompt”，不如优先训练两件事：</p>
+<ul>
+<li>用清晰语言定义任务。</li>
+<li>用工程化方式定义验收标准。</li>
+</ul>
+<p>当这两件事做扎实之后，AI 才会真正从“写代码的玩具”变成“能进入生产流程的工程助手”。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BC%96%E7%A8%8B/">#编程</a>
+      
+        <a href="/tags/AI/">#AI</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AI编程思考2 - 描述与验收</div>
+      <div>https://a3d21.github.io/2026/05/23/2026-05-23-AI-Coding-Reflections-2/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>a3d21</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年5月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/09/24/2026-09-24-AI-Coding-Reflections-3/" title="AI编程思考3 - 别让 AI 替你思考">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">AI编程思考3 - 别让 AI 替你思考</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/05/16/2026-05-16-A-General-Purpose-Monolithic-Service-Framework-in-Go/" title="A General-Purpose Monolithic Service Framework in Go">
+                        <span class="hidden-mobile">A General-Purpose Monolithic Service Framework in Go</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

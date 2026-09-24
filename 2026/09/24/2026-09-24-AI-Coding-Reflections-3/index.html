@@ -1,0 +1,747 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" href="/img/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="a3d21">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前两篇聊的是方法论和实操——怎么描述问题、怎么验收代码、怎么搭工作流。写完之后我一直在想一个更底层的问题：AI 编程真正改变的，到底是什么？ 表面上看，AI 改变了写代码的效率。但用得越多越会发现，它更深刻地改变了一个人对自己能力的认知——而且这种改变，未必是好事。 1. 虚假的成就感1.1 AI 生成代码带来的错觉用 AI 写代码有一种很强的”爽感”：你描述一个想法，几秒钟后一个完整的实现就出来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI编程思考3 - 别让 AI 替你思考">
+<meta property="og:url" content="https://a3d21.github.io/2026/09/24/2026-09-24-AI-Coding-Reflections-3/index.html">
+<meta property="og:site_name" content="a3d21&#39;s blog">
+<meta property="og:description" content="前两篇聊的是方法论和实操——怎么描述问题、怎么验收代码、怎么搭工作流。写完之后我一直在想一个更底层的问题：AI 编程真正改变的，到底是什么？ 表面上看，AI 改变了写代码的效率。但用得越多越会发现，它更深刻地改变了一个人对自己能力的认知——而且这种改变，未必是好事。 1. 虚假的成就感1.1 AI 生成代码带来的错觉用 AI 写代码有一种很强的”爽感”：你描述一个想法，几秒钟后一个完整的实现就出来">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-24T14:07:55.000Z">
+<meta property="article:modified_time" content="2026-09-24T16:34:47.308Z">
+<meta property="article:author" content="a3d21">
+<meta property="article:tag" content="编程">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AI编程思考3 - 别让 AI 替你思考 - a3d21&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"a3d21.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>a3d21&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="别让 AI 替你思考"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-09-24 22:07" pubdate>
+          2026年9月24日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">别让 AI 替你思考</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>前两篇聊的是方法论和实操——怎么描述问题、怎么验收代码、怎么搭工作流。写完之后我一直在想一个更底层的问题：<strong>AI 编程真正改变的，到底是什么？</strong></p>
+<p>表面上看，AI 改变了写代码的效率。但用得越多越会发现，它更深刻地改变了一个人对自己能力的认知——而且这种改变，未必是好事。</p>
+<h2 id="1-虚假的成就感"><a href="#1-虚假的成就感" class="headerlink" title="1. 虚假的成就感"></a>1. 虚假的成就感</h2><h3 id="1-1-AI-生成代码带来的错觉"><a href="#1-1-AI-生成代码带来的错觉" class="headerlink" title="1.1 AI 生成代码带来的错觉"></a>1.1 AI 生成代码带来的错觉</h3><p>用 AI 写代码有一种很强的”爽感”：你描述一个想法，几秒钟后一个完整的实现就出来了。编译通过，测试也过了，甚至比你自己写的还整齐。那一刻你会觉得：”我真厉害，效率翻了十倍。”</p>
+<p>但冷静下来想一想：这个”厉害”到底是谁的？</p>
+<p>如果你让 AI 帮你写了一个你本来就会写的东西，AI 只是帮你省了时间——这是真实的效率提升。但如果你让 AI 帮你写了一个你其实不太懂的东西，然后它跑通了，你就觉得自己”也会了”——这就是虚假的成就感。</p>
+<p>这种错觉很危险，因为它会让你停止学习。你以为自己掌握了某个技术，实际上你只是掌握了”让 AI 帮你生成这段代码”的能力。这两者之间的差距，在出问题的那一刻会暴露得一清二楚。</p>
+<h3 id="1-2-“我上我也行”的幻觉"><a href="#1-2-“我上我也行”的幻觉" class="headerlink" title="1.2 “我上我也行”的幻觉"></a>1.2 “我上我也行”的幻觉</h3><p>AI 编程还制造了另一种更微妙的错觉：**”这东西没什么难的，我上我也行。”**</p>
+<p>当你看到 AI 几分钟就写完一个功能，你很容易低估这件事本身的复杂度。你会想：”原来就这么点代码嘛。”但你没看到的是：AI 背后消耗了海量训练数据中无数工程师的经验积累，而你只是站在这些经验的输出端，按了一下回车。</p>
+<p>这种幻觉在团队里尤其明显。有人用 AI 快速”做出”了一个模块，觉得自己对这块已经很熟了。但一旦需要调试、优化、或者在此基础上做架构调整，就会发现自己对底层逻辑一无所知。<strong>AI 帮你写了代码，但没帮你建立心智模型。</strong></p>
+<p>更极端的情况是：有人因为 AI 能快速生成代码，就觉得编程本身不值钱了。但实际上，AI 让”写代码”这个动作贬值了，<strong>却让”知道该写什么代码”这个判断升值了</strong>。</p>
+<h2 id="2-AI-编程真正的挑战"><a href="#2-AI-编程真正的挑战" class="headerlink" title="2. AI 编程真正的挑战"></a>2. AI 编程真正的挑战</h2><p>很多人觉得 AI 编程的难点在于”写好 prompt”，但用过一段时间就会发现，prompt 只是表面。真正的挑战在更深处。</p>
+<h3 id="2-1-引导-AI-完成任务"><a href="#2-1-引导-AI-完成任务" class="headerlink" title="2.1 引导 AI 完成任务"></a>2.1 引导 AI 完成任务</h3><p>AI 不是一个你扔给它需求就能自动交付的系统。它更像一个能力很强但没有业务背景的新人——技术上什么都能写，但不知道该往哪个方向写。</p>
+<p>引导 AI 的难点在于：</p>
+<ul>
+<li><strong>你得自己先想清楚</strong>。AI 不会帮你把模糊的想法变成清晰的方案，它只会把模糊的想法变成看起来清晰的代码。这两者之间有本质区别。</li>
+<li><strong>你得知道什么时候该干预</strong>。AI 在执行过程中可能会偏离方向，但它不会主动告诉你”我可能走偏了”。发现偏离、及时纠正，这需要你对目标有清晰的认知。</li>
+<li><strong>你得拆解得当</strong>。任务太大，AI 容易迷失；任务太小，你花在沟通上的成本反而比自己写还高。找到合适的粒度，本身就是一种能力。</li>
+</ul>
+<p>说到底，引导 AI 的本质不是”学会跟 AI 说话”，而是”把自己的思路理清楚”。AI 只是放大了”想清楚”和”没想清楚”之间的差距。</p>
+<h3 id="2-2-验收-AI-成果"><a href="#2-2-验收-AI-成果" class="headerlink" title="2.2 验收 AI 成果"></a>2.2 验收 AI 成果</h3><p>如果说引导是”让 AI 做对的事”，验收就是”确认 AI 做的事是对的”。这一步往往比引导更难。</p>
+<p>难点在于：</p>
+<ul>
+<li>**AI 的代码”看起来很对”**。格式规范、命名合理、注释完整——所有表面特征都指向”高质量”。但逻辑是否正确、边界是否处理、是否引入了隐藏的 bug，光”看”是看不出来的。</li>
+<li><strong>你需要比 AI 更懂才能验收 AI</strong>。这是一个悖论：如果你已经比 AI 更懂，为什么还要用 AI？答案是，AI 帮你省的是”动手写”的时间，但”判断对不对”的能力不能省。你可以不写，但你必须能读、能评、能挑毛病。</li>
+<li><strong>验收需要工程化支撑</strong>。靠人肉 review 每一行 AI 生成的代码，既不现实也不可靠。你需要测试、类型检查、lint、CI 这些自动化手段来兜底。没有这些，AI 的高产出只会变成高风险。</li>
+</ul>
+<p>在<a href="/2026/05/23/2026-05-23-AI-Coding-Reflections-2/" title="上一篇">上一篇</a>里我详细讲了验收的方法论，这里不再重复。核心只有一句话：<strong>AI 越能写，你越需要验收能力。</strong></p>
+<h3 id="2-3-判断力比产出更重要"><a href="#2-3-判断力比产出更重要" class="headerlink" title="2.3 判断力比产出更重要"></a>2.3 判断力比产出更重要</h3><p>AI 编程最大的认知转变，不是”从手写变成 AI 写”，而是**从”产出者”变成”判断者”**。</p>
+<p>在没有 AI 的时代，程序员的核心产出是代码。写得快、写得好，就是能力强。但在 AI 时代，代码产出已经不是瓶颈了——AI 可以在几秒内生成几百行代码。真正稀缺的，是判断以下这些问题的能力：</p>
+<ul>
+<li>这个方案是不是最合适的？</li>
+<li>这段代码有没有隐患？</li>
+<li>这个架构能不能撑住未来的需求？</li>
+<li>这次改动的影响范围有多大？</li>
+<li>这个 trade-off 值不值得？</li>
+</ul>
+<p>这些问题，AI 给不了你可靠的答案。因为判断需要的是对业务的深度理解、对工程的长期经验、对风险的直觉感知——这些都不是靠生成几段代码就能获得的。</p>
+<p>所以一个反直觉的结论是：<strong>AI 越强，人的判断力越重要</strong>。工具的产出能力越高，”用不用”和”怎么用”的决策价值就越大。一个判断力差的人用上最强的 AI，产出的可能不是更好的软件，而是更多的技术债。</p>
+<h2 id="3-AI-和人的协作模式"><a href="#3-AI-和人的协作模式" class="headerlink" title="3. AI 和人的协作模式"></a>3. AI 和人的协作模式</h2><p>理解了上面这些挑战，就会自然引出一个问题：我们到底应该怎么跟 AI 协作？</p>
+<h3 id="3-1-两种范式：AI-代替思考-vs-AI-当成教练"><a href="#3-1-两种范式：AI-代替思考-vs-AI-当成教练" class="headerlink" title="3.1 两种范式：AI 代替思考 vs AI 当成教练"></a>3.1 两种范式：AI 代替思考 vs AI 当成教练</h3><p>我见过两种截然不同的 AI 使用方式。</p>
+<p><strong>第一种：让 AI 代替思考。</strong></p>
+<p>典型场景是：遇到问题，直接扔给 AI，拿到答案，复制粘贴，继续下一个。不去理解 AI 为什么这么做，不去验证结果是否正确，只关心”能不能跑”。</p>
+<p>这种方式短期效率很高，但长期代价巨大。你的能力不会因为用了 AI 而增长——反而会因为跳过了思考过程而萎缩。就像长期坐轮椅的人，腿部肌肉会退化一样。AI 代替了你的思考，你的思考能力也在慢慢退化。</p>
+<p><strong>第二种：把 AI 当成教练。</strong></p>
+<p>同样是遇到问题扔给 AI，但拿到答案后会追问：</p>
+<ul>
+<li>“为什么选这个方案而不是那个？”</li>
+<li>“这种写法和我之前的写法相比，优劣在哪？”</li>
+<li>“如果需求变成 X，这个方案还能撑住吗？”</li>
+<li>“这里有没有我没考虑到的边界情况？”</li>
+</ul>
+<p>这种方式表面上”慢”了一点，但你在每一次交互中都在积累理解。AI 不只是帮你写了代码，还帮你理解了为什么这么写。<strong>你用的不是 AI 的产出，而是 AI 的知识。</strong></p>
+<p>两种范式的区别，本质上是：<strong>你把 AI 当成代步工具，还是当成陪练？</strong> 前者让你走得快但腿在退化，后者让你走得稍慢但越走越强。</p>
+<h3 id="3-2-展望：AI-是最好的老师"><a href="#3-2-展望：AI-是最好的老师" class="headerlink" title="3.2 展望：AI 是最好的老师"></a>3.2 展望：AI 是最好的老师</h3><p>如果沿着”AI 当教练”的思路往远处想，会发现一个让人兴奋的可能性：<strong>AI 可能是人类有史以来最好的老师。</strong></p>
+<p>为什么这么说？</p>
+<ul>
+<li><strong>无限耐心</strong>。它不会因为你问了第十遍同一个问题而不耐烦。</li>
+<li><strong>即时反馈</strong>。你写完一段代码，它立刻能告诉你哪里有问题、为什么有问题、怎么改。传统教育中，反馈延迟是学习效率最大的杀手。</li>
+<li><strong>个性化路径</strong>。它可以根据你的水平动态调整解释的深度和方式，不存在”全班统一进度”的问题。</li>
+<li><strong>实战导向</strong>。它不是在抽象地教你理论，而是在你真实的项目中、真实的问题上帮你理解。这是最高效的学习方式——在实践中学习。</li>
+<li><strong>跨领域覆盖</strong>。一个人不可能在所有领域都找到好的导师，但 AI 可以在你需要的任何领域给出相当高质量的指导。</li>
+</ul>
+<p>当然，AI 作为老师也有明显的局限：它会编造事实、它缺乏真实的工程直觉、它不会主动根据你的成长规划学习路径。但如果你有足够的判断力去过滤和验证，AI 的教学密度和效率是任何传统教育形式都无法比拟的。</p>
+<p>关键在于你的心态：<strong>你是来让 AI 帮你干活的，还是来向 AI 学东西的？</strong></p>
+<p>最好的状态是两者兼得——让 AI 帮你高效产出的同时，在每一次协作中加深你自己的理解。AI 写了一段你没见过的写法，你花两分钟搞懂它；AI 提了一个你没想到的方案，你花五分钟评估它的利弊。日积月累，你借助 AI 获得的不只是代码，还有认知的增长。</p>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4. 小结"></a>4. 小结</h2><p>AI 编程的三篇思考写到这里，脉络差不多完整了：</p>
+<ul>
+<li><a href="/2026/05/03/2026-05-03-AI-Coding-Practices/" title="第一篇">第一篇</a>聊的是**方法和工具**——AI 编程的范式演进、最佳实践和具体技巧。</li>
+<li><a href="/2026/05/23/2026-05-23-AI-Coding-Reflections-2/" title="第二篇">第二篇</a>聊的是**核心能力**——描述问题和验收结果。</li>
+<li>这一篇聊的是<strong>心态和定位</strong>——怎么看待 AI 带来的能力错觉，以及如何找到正确的协作姿态。</li>
+</ul>
+<p>如果只留一句话，我想说的是：</p>
+<p><strong>AI 让”写代码”变得前所未有地容易，但”写对代码”从来都不容易。区别只在于，以前瓶颈是手速，现在瓶颈是判断力。</strong></p>
+<p>不要让 AI 的高效产出麻痹了你对能力的真实评估。永远记得：你用 AI 做出来的东西，不等于你自己能做出来的东西。承认这一点不丢人，反而是用好 AI 的前提——因为只有知道自己不懂什么，才知道该让 AI 教你什么。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E7%BC%96%E7%A8%8B/">#编程</a>
+      
+        <a href="/tags/AI/">#AI</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AI编程思考3 - 别让 AI 替你思考</div>
+      <div>https://a3d21.github.io/2026/09/24/2026-09-24-AI-Coding-Reflections-3/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>a3d21</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年9月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/05/23/2026-05-23-AI-Coding-Reflections-2/" title="AI编程思考2 - 描述与验收">
+                        <span class="hidden-mobile">AI编程思考2 - 描述与验收</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
